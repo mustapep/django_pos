@@ -32,4 +32,4 @@ class Sales(models.Model):
     update_at = models.DateField(auto_now=True, null=True)
 
     def __str__(self):
-        return self.address
+        return str(self.user)
