@@ -122,3 +122,6 @@ GitHub.sublime-settings
 !.vscode/extensions.json
 .history
 /src/apps/transactions/migrations/0002_detailtransaction.py
+/src/apps/transactions/migrations/0003_auto_20210409_0751.py
+/src/apps/transactions/migrations/0004_auto_20210409_0754.py
+/src/apps/transactions/migrations/0005_detailtransaction_quantity.py
