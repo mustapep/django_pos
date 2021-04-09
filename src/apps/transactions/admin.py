@@ -11,7 +11,7 @@ class TransactionsAdmin(admin.ModelAdmin):
 
 
 class DetailTransactionAdmin(admin.ModelAdmin):
-    list_display = ("transaction", "detail_item", "quantity")
+    list_display = ("transaction", "detail_item", "quantity", "create_at", "update_at")
 
 
 admin.site.register(PaymentMethods, PaymentMethodAdmin)
