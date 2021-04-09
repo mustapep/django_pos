@@ -1,6 +1,7 @@
 /src/apps/items/migrations/0001_initial.py
 /src/apps/items/migrations/0002_items_item_img.py
 /src/apps/transactions/migrations/0001_initial.py
+/src/apps/accounts/migrations/0001_initial.py
 
 /src/media/*
 # Django #
@@ -15,6 +16,7 @@ media
 *.bak
 
 # If you are using PyCharm #
+.idea/*
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
@@ -119,3 +121,4 @@ GitHub.sublime-settings
 !.vscode/launch.json
 !.vscode/extensions.json
 .history
+/src/apps/transactions/migrations/0002_detailtransaction.py
