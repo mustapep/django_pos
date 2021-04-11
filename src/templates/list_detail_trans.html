@@ -1,18 +1,51 @@
 {% extends "base/base.html" %}
 {% block content %}
+<a href="/transactions" class="btn btn-warning">Back</a>
 <div class="row">
-    <a href="/transactions" class="btn btn-warning">Back</a>
     <div class="col-2"></div>
     <div class="col-8">
-        <p>
-            {{dt}}
-        </p>
-        <table class="table">
-            <thead>
-                <th></th>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="row">
+            <div>
+                <table class="table">
+                    <thead>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </thead>
+                    <tbody>
+                        {% for d in dt %}
+                            <tr>
+                                <td>
+                                    {{d.detail_item.name}}
+                                </td>
+                                <td>
+                                    {{d.detail_item.price}}
+                                </td>
+                                <td>
+                                    {{d.quantity}}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table class="table">
+                    <thead>
+                        <th>total</th>
+                    </thead>
+                    <tbody>
+                        {% for t in total %}
+                          <tr>
+                              <td>
+                                  {{t}}
+                              </td>
+                          </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="col-2"></div>
 </div>

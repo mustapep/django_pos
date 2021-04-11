@@ -22,7 +22,11 @@ class DetailTransactionView(View):
 
     def get(self, request, id):
         trn = Transactions.objects.get(id=id)
-        dt = DetailTransaction.objects.filter(transaction=trn)
+        dt = DetailTransaction.objects.filter(transaction=trn).select_related('transaction', 'detail_item')
+        total = []
+        for d in dt:
+            total.append(d.detail_item.price*d.quantity)
         return render(request, self.template_name, {
-            'dt': dt
+            'dt': dt,
+            'total': total
         })
