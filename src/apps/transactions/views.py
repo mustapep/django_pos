@@ -14,3 +14,15 @@ class ListTransactionView(View):
         return render(request, self.template_name, {
             "t_all": t_all
         })
+
+
+class DetailTransactionView(View):
+
+    template_name = 'list_detail_trans.html'
+
+    def get(self, request, id):
+        trn = Transactions.objects.get(id=id)
+        dt = DetailTransaction.objects.filter(transaction=trn)
+        return render(request, self.template_name, {
+            'dt': dt
+        })
