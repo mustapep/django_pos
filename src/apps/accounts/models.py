@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 class CardMembers(models.Model):
     name = models.CharField(max_length=45)
-    create_at = models.DateField(auto_now_add=True)
-    update_at = models.DateField(auto_now=True, null=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -19,8 +19,8 @@ class Members(models.Model):
     card_member = models.ForeignKey(CardMembers, on_delete=models.CASCADE, related_name='card')
     gender = models.CharField(max_length=1)
     photo = models.ImageField(upload_to='profile/')
-    create_at = models.DateField(auto_now_add=True)
-    update_at = models.DateField(auto_now=True, null=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.customers)
@@ -34,8 +34,8 @@ class Sales(models.Model):
     address = models.CharField(max_length=100)
     nik_numb = models.IntegerField()
     ktp_image = models.ImageField(upload_to='ktp/')
-    create_at = models.DateField(auto_now_add=True)
-    update_at = models.DateField(auto_now=True, null=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.user)

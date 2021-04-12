@@ -5,8 +5,8 @@ from ..items.models import Items
 
 class PaymentMethods(models.Model):
     name = models.CharField(max_length=25)
-    create_at = models.DateField(auto_now_add=True)
-    update_at = models.DateField(auto_now=True, null=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -20,9 +20,9 @@ class Transactions(models.Model):
     sales = models.ForeignKey(Sales, on_delete=models.CASCADE, related_name='sales')
     payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, related_name='payment_method')
     card_number = models.IntegerField(null=True, blank=True)
-    paid_of = models.BooleanField(null=True)
-    create_at = models.DateField(auto_now_add=True)
-    update_at = models.DateField(auto_now=True, null=True)
+    paid_of = models.BooleanField(default=False)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.sales)
