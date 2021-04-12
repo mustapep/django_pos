@@ -25,5 +25,6 @@ urlpatterns = [
     path('test/', va.Index.as_view()),
     path('transactions/', vt.ListTransactionView.as_view()),
     path('detail_transaction/<int:id>', vt.DetailTransactionView.as_view()),
+    path('detail_transaction/<int:id>/pay', vt.PayingView.as_view()),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

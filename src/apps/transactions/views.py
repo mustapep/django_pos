@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transactions, DetailTransaction
+from datetime import datetime
 
 
 class ListTransactionView(View):
@@ -35,3 +36,14 @@ class DetailTransactionView(View):
             't_i': sum(total_item),
             't_p': sum(total)
         })
+
+
+class PayingView(View):
+
+    def get(self, request, id):
+        trn = Transactions.objects.get(id=id)
+        trn.paid_of = True
+        trn.update_at = datetime.now()
+        trn.save()
+
+        return redirect('/transactions')
