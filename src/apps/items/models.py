@@ -3,7 +3,7 @@ from django.db import models
 
 class Categories(models.Model):
     name = models.CharField(max_length=50)
-    sub_from = models.ForeignKey('self', on_delete=models.CASCADE, related_name='sub')
+    sub_from = models.ForeignKey('self', on_delete=models.CASCADE, related_name='sub', null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
