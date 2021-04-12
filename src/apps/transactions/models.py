@@ -11,6 +11,9 @@ class PaymentMethods(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        db_table = 'payment_methods'
+
 
 class Transactions(models.Model):
     member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='members', null=True, blank=True)
@@ -24,6 +27,9 @@ class Transactions(models.Model):
     def __str__(self):
         return str(self.sales)
 
+    class Meta:
+        db_table = 'transactions'
+
 
 class DetailTransaction(models.Model):
     transaction = models.ForeignKey(Transactions, on_delete=models.CASCADE, related_name='trans')
@@ -34,3 +40,6 @@ class DetailTransaction(models.Model):
 
     def __str__(self):
         return str(self.quantity)
+
+    class Meta:
+        db_table = 'detail_transactions'

@@ -10,6 +10,9 @@ class CardMembers(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        db_table = 'card_members'
+
 
 class Members(models.Model):
     customers = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customers')
@@ -22,6 +25,9 @@ class Members(models.Model):
     def __str__(self):
         return str(self.customers)
 
+    class Meta:
+        db_table = 'members'
+
 
 class Sales(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
@@ -33,3 +39,6 @@ class Sales(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+    class Meta:
+        db_table = 'sales'

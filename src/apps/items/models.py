@@ -10,6 +10,9 @@ class Categories(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        db_table = 'categories'
+
 
 class Items(models.Model):
     categories = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name='cat')
@@ -22,3 +25,6 @@ class Items(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        db_table = 'items'
