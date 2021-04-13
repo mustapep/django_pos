@@ -1,4 +1,7 @@
-from django.forms import forms
+from django import forms
+from .models import Transactions
+from apps.items.models import Items
 
-class PaidOfTransactionForms(forms.Form):
-    pass
+
+class SalesCreateOrderForm(forms.Form):
+    quantity = forms.IntegerField()
