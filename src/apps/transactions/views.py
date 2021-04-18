@@ -47,9 +47,12 @@ class DetailTransactionView(View):
 class AddDtansactionView(View):
 
     def post(self, request, id, items_id):
+        print("id:", id)
+        print("items_id:", items_id)
+        print('request.POST value :', request.POST)
+        form = SalesCreateOrderForm(request.POST)
         trn = Transactions.objects.get(id=id)
         itm = Items.objects.get(id=items_id)
-        form = SalesCreateOrderForm(request.POST)
         print(form.cleaned_data['quantity'])
         if form.is_valid:
             print("iki Valid Bro")
