@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.views import View
+from .forms import LoginForm
 
-
-class Index(View):
-    template_name = 'base/base.html'
+class Login(View):
+    template_name = 'login.html'
 
     def get(self, request):
+        form = LoginForm(request.POST)
+
         return render(request, self.template_name, {
-            'tittle': "hello"
+            'form': form
         })
