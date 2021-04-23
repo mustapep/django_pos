@@ -127,3 +127,4 @@ GitHub.sublime-settings
 /src/apps/transactions/migrations/0005_detailtransaction_quantity.py
 /src/apps/items/migrations/0002_auto_20210412_1721.py
 /src/apps/items/migrations/0003_auto_20210412_1721.py
+/src/static/vendors/
