@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', va.Login.as_view()),
     path('register/', va.RegisterView.as_view()),
+    path('register/save', va.RegisterSaveView.as_view()),
     path('transactions/', vt.ListTransactionView.as_view()),
     path('detail_transaction/<int:id>', vt.DetailTransactionView.as_view()),
     path('detail_transaction/save/<int:id>/<int:items_id>', vt.AddDetailTransactionView.as_view()),

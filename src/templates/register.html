@@ -14,7 +14,7 @@
     <div class="row">
       <div class="col"></div>
       <div class="col" style="padding-top: 55px;">
-        <form action="" method="post">
+        <form action="/register/save" method="post" enctype="multipart/form-data">
           <h2 style="text-align: center;">Register</h2>
           {% csrf_token %}
           <div class="form-group">
@@ -37,6 +37,12 @@
           </div>
           <div class="form-group">
             <label for="">
+              {{form.gender.label}}
+            </label>
+            {{form.gender}}
+          </div>
+          <div class="form-group">
+            <label for="">
               {{form.email.label}}
             </label>
             {{form.email}}
@@ -46,6 +52,12 @@
               {{form.member_card.label}}
             </label>
             {{form.member_card}}
+          </div>
+          <div class="form-group">
+            <label for="">
+              {{form.photo.label}}
+            </label>
+            {{form.photo}}
           </div>
           <div class="form-group">
             <label for="">
@@ -60,10 +72,10 @@
             {{form.password2}}
           </div>
           <div class="form-group">
-            <a href="" class="btn-lg btn-info" style="padding: 0.5rem 9.3rem;
+            <button type="submit" class="btn-lg btn-info" style="padding: 0.5rem 9.3rem;
             font-size: 1.25rem;
             line-height: 2.5;
-            border-radius: 1.3rem;">Register</a>
+            border-radius: 1.3rem;">Register</button>
             <a href="/login" class="btn-lg btn-danger" style="padding: 0.5rem 10.3rem;
             font-size: 1.25rem;
             line-height: 2.5;
