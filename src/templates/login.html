@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Resto | Login </title>
+  {% include "base/css.html" %}
+  {% include "base/js.html" %}
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col"></div>
+      <div class="col" style="padding-top: 55px;">
+        <form action="" method="post">
+          <h2 style="text-align: center;">LOGIN</h2>
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="">
+              {{form.username.label}}
+            </label>
+            {{form.username}}
+          </div>
+          <div class="form-group">
+            <label for="">
+              {{form.password.label}}
+            </label>
+            {{form.password}}
+          </div>
+          <div class="form-group">
+            <a href="" class="btn-lg btn-info" style="margin-left: 49%">Login</a>
+            <a href="/register" class="btn-lg btn-secondary">Register</a>
+          </div>
+        </form>
+      </div>
+      <div class="col"></div>
+    </div>
+  </div>
+  
+</body>
+</html>
