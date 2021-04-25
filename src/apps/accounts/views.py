@@ -70,7 +70,7 @@ class LoginProcess(View):
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect('/transactions')
+            return redirect('/landingpage')
         else:
             return HttpResponse(form.errors)
 
