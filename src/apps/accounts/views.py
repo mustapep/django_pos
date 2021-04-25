@@ -84,7 +84,7 @@ class LogoutView(View):
 
 
 class LandingPageView(View):
-    template_name = 'customer_landingPage.html'
+    template_name = 'customers/customer_landingPage.html'
 
     def get(self, request):
         return render(request, self.template_name)
