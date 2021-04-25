@@ -4,7 +4,7 @@ from .forms import LoginForm, RegisterMemberForm
 from django.http import HttpResponse
 from .models import User, Members
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 
 class Login(View):
@@ -73,3 +73,11 @@ class LoginProcess(View):
             return redirect('/transactions')
         else:
             return HttpResponse(form.errors)
+
+
+class LogoutView(View):
+
+    def get(self, request):
+        logout(request)
+
+        return redirect('/login')

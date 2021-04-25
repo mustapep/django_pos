@@ -23,6 +23,7 @@ from apps.transactions import views as vt
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', va.Login.as_view()),
+    path('logout/', va.LogoutView.as_view()),
     path('login/process', va.LoginProcess.as_view()),
     path('register/', va.RegisterView.as_view()),
     path('register/save', va.RegisterSaveView.as_view()),
