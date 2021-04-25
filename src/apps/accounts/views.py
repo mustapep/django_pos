@@ -4,6 +4,7 @@ from .forms import LoginForm, RegisterMemberForm
 from django.http import HttpResponse
 from .models import User, Members
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 
 
 class Login(View):
@@ -58,3 +59,17 @@ class RegisterSaveView(View):
             return HttpResponse(form.errors)
 
         return redirect('/register')
+
+
+class LoginProcess(View):
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('/transactions')
+        else:
+            return HttpResponse(form.errors)
