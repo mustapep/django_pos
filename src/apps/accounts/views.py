@@ -4,6 +4,7 @@ from .forms import LoginForm, RegisterMemberForm
 from django.http import HttpResponse
 from .models import User, Members
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 
 
 class Login(View):
@@ -58,3 +59,32 @@ class RegisterSaveView(View):
             return HttpResponse(form.errors)
 
         return redirect('/register')
+
+
+class LoginProcess(View):
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('/landingpage')
+        else:
+            return HttpResponse(form.errors)
+
+
+class LogoutView(View):
+
+    def get(self, request):
+        logout(request)
+
+        return redirect('/login')
+
+
+class LandingPageView(View):
+    template_name = 'customer_landingPage.html'
+
+    def get(self, request):
+        return render(request, self.template_name)

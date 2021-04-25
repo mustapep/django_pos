@@ -1,7 +1,6 @@
 from django import forms
 from apps.accounts import models as mdl_account
 
-
 class LoginForm(forms.Form):
     username = forms.CharField(label="Username", widget=forms.TextInput(attrs={
         'class': 'form-control'
@@ -14,7 +13,7 @@ class LoginForm(forms.Form):
 class RegisterMemberForm(forms.Form):
 
     CHOISE_GENDER = (
-        ("", "----"),
+        ("", "---"),
         ("L", "MALE"),
         ("F", "FEMALE")
     )
@@ -40,7 +39,8 @@ class RegisterMemberForm(forms.Form):
         'type': 'email'
     }))
 
-    gender = forms.CharField(label="Gender", widget=forms.Select(choices=CHOISE_GENDER, attrs={
+    gender = forms.CharField(label="Gender", widget=forms.Select(choices=CHOISE_GENDER,
+        attrs={
         'class': 'form-control'
         }))
 
