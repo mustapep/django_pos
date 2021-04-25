@@ -81,3 +81,10 @@ class LogoutView(View):
         logout(request)
 
         return redirect('/login')
+
+
+class LandingPageView(View):
+    template_name = 'customer_landingPage.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
