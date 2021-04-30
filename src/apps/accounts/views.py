@@ -79,7 +79,7 @@ class LoginProcess(View):
                 return redirect('')
             else:
                 login(request, user)
-                return redirect('/landingpage')
+                return redirect('/customer_landingpage')
         else:
             return HttpResponse(form.errors)
 
@@ -92,7 +92,7 @@ class LogoutView(View):
         return redirect('/login')
 
 
-class LandingPageView(View):
+class CustomerLandingPageView(View):
     template_name = 'customers/customer_landingPage.html'
 
     def get(self, request):

@@ -25,7 +25,7 @@ urlpatterns = [
     path('login/', va.Login.as_view()),
     path('logout/', va.LogoutView.as_view()),
     path('login/process', va.LoginProcess.as_view()),
-    path('landingpage', va.LandingPageView.as_view()),
+    path('customer_landingpage', va.CustomerLandingPageView.as_view()),
     path('admin_landingpage', va.AdminLandingPageView.as_view()),
     path('register/', va.RegisterView.as_view()),
     path('register/save', va.RegisterSaveView.as_view()),
