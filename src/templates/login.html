@@ -16,6 +16,16 @@
       <div class="col" style="padding-top: 55px;">
         <form action="process" method="post">
           <h2 style="text-align: center;">LOGIN</h2>
+          {% if messages %}
+          <ul class="messages">
+            {% for m in messages %}
+              <li>
+                {{m}}
+              </li>
+            {% endfor %}
+          </ul>
+            
+          {% endif %}
           {% csrf_token %}
           <div class="form-group">
             <label for="">
