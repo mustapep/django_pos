@@ -71,6 +71,8 @@ class LoginProcess(View):
             try:
                 obj = User.objects.get(username=username)
                 usr = authenticate(username=username, password=password)
+                print(usr)
+                print(type(usr))
                 if usr != None:
                     if usr.is_superuser:
                         login(request, usr)
