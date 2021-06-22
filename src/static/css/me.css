@@ -1,0 +1,27 @@
+#foto_tempat{
+    width: 89px;
+    height: auto;
+    margin-left: 22%;
+}
+
+.card-header {
+    background-color: #007bff;
+}
+
+.img-card {
+    margin-top: 5px;
+    position: relative;
+    width: 98px;
+    height: 98px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-left: 46%;
+}
+
+.wraps-login{
+    margin: 11% 7% 12% 7%;
+}
+
+.btn-login{
+    width: 100%;
+}

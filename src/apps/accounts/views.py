@@ -68,9 +68,27 @@ class LoginProcess(View):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('/landingpage')
+            try:
+                obj = User.objects.get(username=username)
+                usr = authenticate(username=username, password=password)
+                print(usr)
+                print(type(usr))
+                if usr != None:
+                    if usr.is_superuser:
+                        login(request, usr)
+                        return redirect('/admin_landingpage')
+                    elif usr.is_staff:
+                        login(request, usr)
+                        return redirect('')
+                    else:
+                        login(request, usr)
+                        return redirect('/customer_landingpage')
+                else:
+                    messages.error(request, 'Password is not valid')
+                    return redirect('/login')
+            except:
+                messages.error(request, "Username is not found")
+                return redirect('/login')
         else:
             return HttpResponse(form.errors)
 
@@ -83,8 +101,15 @@ class LogoutView(View):
         return redirect('/login')
 
 
-class LandingPageView(View):
-    template_name = 'customer_landingPage.html'
+class CustomerLandingPageView(View):
+    template_name = 'customers/customer_landingPage.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+class AdminLandingPageView(View):
+    template_name = 'admin/admin_landingpage.html'
 
     def get(self, request):
         return render(request, self.template_name)

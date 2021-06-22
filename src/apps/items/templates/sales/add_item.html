@@ -1,0 +1,40 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+            <form action="/items/save" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h1>Add Item</h1>
+                <div class="form-group">
+                    <label for="">{{form.category.label}}</label>
+                    {{form.category}}
+                </div>
+                <div class="form-group">
+                    <label for="">{{form.name.label}}</label>
+                    {{form.name}}
+                </div>
+                <div class="form-group">
+                    <label for="">{{form.price.label}}</label>
+                    {{form.price}}
+                </div>
+                <div class="form-group">
+                    <label for="">{{form.description.label}}</label>
+                    {{form.description}}
+                </div>
+                <div class="form-group">
+                    <label for="">{{form.item_img.label}}</label>
+                    {{form.item_img}}
+                </div>
+                <div class="form-group">
+                    <a href="/items" class="btn btn-warning">Cancel</a>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+  
+{% endblock content %}
