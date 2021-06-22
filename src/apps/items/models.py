@@ -27,4 +27,9 @@ class Items(models.Model):
         return self.name
 
     class Meta:
+        permissions = [('can_view_items', 'Can view items'),
+                       ('can_add_items', 'Can add items'),
+                       ('can_update_items', 'Can update items'),
+                       ('can_delete_items', 'Can delete items'),
+                       ]
         db_table = 'items'
