@@ -115,6 +115,7 @@ class LogoutView(View):
 
 class CustomerLandingPageView(LoginRequiredMixin, View):
     template_name = 'customers/customer_landingPage.html'
+    login_url = '/login'
 
     def get(self, request):
         return render(request, self.template_name)
