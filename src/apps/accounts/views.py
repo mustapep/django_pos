@@ -5,12 +5,20 @@ from django.http import HttpResponse
 from .models import User, Members
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
 
 
 class Login(View):
     template_name = 'login.html'
 
     def get(self, request):
+        if request.user.is_authenticated:
+            if Group.objects.get(name='sales') in request.user.groups.all():
+                return redirect('/items')
+            else:
+                return redirect('/customer_landingpage')
+
         form = LoginForm(request.POST)
 
         return render(request, self.template_name, {
@@ -23,6 +31,11 @@ class RegisterView(View):
     template_name = 'register.html'
 
     def get(self, request):
+        if request.user.is_authenticated:
+            if Group.objects.get(name='sales') in request.user.groups.all():
+                return redirect('/items')
+            else:
+                return redirect('/customer_landingpage')
         form = RegisterMemberForm(request.POST)
         return render(request, self.template_name, {
             'form': form
@@ -69,7 +82,6 @@ class LoginProcess(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             try:
-                obj = User.objects.get(username=username)
                 usr = authenticate(username=username, password=password)
                 print(usr)
                 print(type(usr))
@@ -101,8 +113,9 @@ class LogoutView(View):
         return redirect('/login')
 
 
-class CustomerLandingPageView(View):
+class CustomerLandingPageView(LoginRequiredMixin, View):
     template_name = 'customers/customer_landingPage.html'
+    login_url = '/login'
 
     def get(self, request):
         return render(request, self.template_name)

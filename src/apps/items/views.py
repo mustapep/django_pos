@@ -1,26 +1,30 @@
 from django.shortcuts import render, redirect
 from .models import Categories, Items
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .forms import AddItemForm
 from django.http import HttpResponse
+from .item_mixin import IsAutenticate
 
 
-class ListItemView(LoginRequiredMixin, View):
-
+class ListItemView(LoginRequiredMixin, IsAutenticate, PermissionRequiredMixin, View):
+    permission_required = [('items.view_items')]
     template_name = 'sales/list_item.html'
     login_url = '/login'
 
     def get(self, request):
         obj = Items.objects.all()
+        print(request.user.is_authenticated)
         return render(request, self.template_name, {
-            'obj':obj
+            'obj': obj
         })
 
 
-class AddItemView(LoginRequiredMixin, View):
+class AddItemView(LoginRequiredMixin, IsAutenticate, PermissionRequiredMixin, View):
+
     template_name = 'sales/add_item.html'
     login_url = '/login'
+    permission_required = [('items.add_items')]
 
     def get(self, request):
         form = AddItemForm()
