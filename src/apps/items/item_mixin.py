@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 class IsAutenticate(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            if Group.objects.get(name='sales').name in request.user.groups.all() or request.user.is_superuser:
+            if Group.objects.get(name='sales') in request.user.groups.all() or request.user.is_superuser:
                 print()
                 return redirect('/items')
             else:

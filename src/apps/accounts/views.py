@@ -81,24 +81,15 @@ class LoginProcess(View):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            try:
-                usr = authenticate(username=username, password=password)
-                print(usr)
-                print(type(usr))
-                if usr != None:
-                    if usr.is_superuser:
-                        login(request, usr)
-                        return redirect('/admin_landingpage')
-                    elif usr.is_staff:
-                        login(request, usr)
-                        return redirect('')
-                    else:
-                        login(request, usr)
-                        return redirect('/customer_landingpage')
+            usr = authenticate(username=username, password=password)
+            if usr.is_authenticated:
+                if Group.objects.get(name='sales') in usr.groups.all():
+                    login(request, usr)
+                    return redirect('/items')
                 else:
-                    messages.error(request, 'Password is not valid')
-                    return redirect('/login')
-            except:
+                    login(request, usr)
+                    return redirect('/customer_landingpage')
+            else:
                 messages.error(request, "Username is not found")
                 return redirect('/login')
         else:
