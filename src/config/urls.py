@@ -20,6 +20,8 @@ from django.conf import settings
 from apps.accounts import views as va
 from apps.transactions import views as vt
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', va.Login.as_view()),
@@ -34,6 +36,6 @@ urlpatterns = [
     path('detail_transaction/save/<int:id>/<int:items_id>', vt.AddDetailTransactionView.as_view()),
     path('detail_transaction/<int:id>/pay', vt.PayingView.as_view()),
 
-    path('items/', include('apps.items.urls'))
+    path('items/', include('apps.items.urls', namespace='items'))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
