@@ -1,123 +1,52 @@
-{% extends "base/base.html" %}
+{% extends "base/dasboard.html" %}
 {% block content %}
-<div class="row">
-    <div class="col">
-        <div class="container">
-            <p>
-                {{items.id}}
-            </p>
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <img src="{{items.item_img.url}}" alt="">
-                    </div>
-                </div>
-                <div class="col">
-                    <form action="save/{{obj.id}}/{{items.id}}" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <p>Quantity</p>
-                            {{form.quantity}}
-                         </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-info">Pesan</button>
-                        </div>
-                    </form>   
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col"></div>
     </div>
-    <div class="col">
-        <div class="container" style="padding-top: 25px;">
-            <div class="row">
-                <div class="col-3"></div>
-                <div class="col-6">
-                    <a href="" class="btn btn-info" style="margin-left: 75%;">+</a>
-                    <p>
-                        id: {{obj.id}}
-                    </p>
-                    <p>
-                        sales: {{obj.sales}}
-                    </p>
-                    <p>
-                      order at:  {{obj.create_at}}
-                    </p>
-                </div>
-                <div class="col-3"></div>
-            </div>
-            <div class="row" style="padding-top: 12px;">
-                <div class="col-3">
-                </div>
-                <div class="col-6">
-                    <h1>List Order</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
                     <div class="row">
-                        <div> 
-                            <table class="table">
-                                <thead>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                </thead>
-                                <tbody>
-                                    {% for d in dt %}
-                                        <tr>
-                                            <td>
-                                                {{d.detail_item.name}}
-                                            </td>
-                                            <td>
-                                                {{d.detail_item.price}}
-                                            </td>
-                                            <td>
-                                                {{d.quantity}}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div>
-                            <table class="table">
-                                <thead>
-                                    <th>total</th>
-                                </thead>
-                                <tbody>
-                                    {% for t in total %}
-                                      <tr>
-                                          <td>
-                                              {{t}}
-                                          </td>
-                                      </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                        <div class="col-8"></div>
+                        <div class="col">
+                            <div class="card-tools">
+                                <form action="">
+                                    <div class="input-group">
+                                        {{srch.search}}
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-default">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-3">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3"></div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <h4>
-                            total items: {{t_i}}
-                        </h4>
-                        <h4>
-                            billing: {{t_p}}
-                        </h4>
+                <div class="card-body">
+                    <div class="card card_item">
+                        <div class="card-header color">
+                            <img src="{{items.item_img.url}}" alt="" class="img_item">
+                        </div>
+                        <div class="card-body">
+                            <form action="">
+                                {% csrf_token %}
+                                <h2 style="text-align: center;">{{items.name}}</h2>
+                                <h3 style="text-align: center;">Rp.{{items.price}}</h3>
+                                <p>Quantity
+                                    {{form.quantity}}
+                                </p>
+                                <button type="submit" class="btn btn-success">Add to Chart</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="form-group" style="margin-left: 50%;">
-                        <a href="/transactions" class="btn btn-warning">Back</a>
-                        <a href="{{obj.id}}/pay" class="btn btn-info">Bayar</a>
-                    </div>
-                </div>
-                <div class="col-3">
-                    
                 </div>
             </div>
         </div>
     </div>
 </div>
-  
 {% endblock content %}

@@ -31,11 +31,12 @@ urlpatterns = [
     path('admin_landingpage', va.AdminLandingPageView.as_view()),
     path('register/', va.RegisterView.as_view()),
     path('register/save', va.RegisterSaveView.as_view()),
-    path('transactions/', vt.ListTransactionView.as_view()),
-    path('detail_transaction/<int:id>', vt.DetailTransactionView.as_view()),
-    path('detail_transaction/save/<int:id>/<int:items_id>', vt.AddDetailTransactionView.as_view()),
-    path('detail_transaction/<int:id>/pay', vt.PayingView.as_view()),
+    # path('transactions/', vt.ListTransactionView.as_view()),
+    # path('detail_transaction/<int:id>', vt.DetailTransactionView.as_view()),
+    # path('detail_transaction/save/<int:id>/<int:items_id>', vt.AddDetailTransactionView.as_view()),
+    # path('detail_transaction/<int:id>/pay', vt.PayingView.as_view()),
 
-    path('items/', include('apps.items.urls', namespace='items'))
+    path('items/', include('apps.items.urls', namespace='items')),
+    path('transactions/', include('apps.transactions.urls', namespace='transaction'))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -8,6 +8,14 @@
     background-color: #007bff;
 }
 
+.card_item{
+    width: 310px;
+}
+
+.color {
+    background-color: #f3f4f3;
+}
+
 .img-card {
     margin-top: 5px;
     position: relative;
@@ -16,6 +24,11 @@
     overflow: hidden;
     border-radius: 50%;
     margin-left: 46%;
+}
+
+.img_item {
+    width: 272px;
+    height: auto;
 }
 
 .wraps-login{

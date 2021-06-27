@@ -1,55 +1,68 @@
-{% extends "base/base.html" %}
+{% extends "base/dasboard.html" %}
 {% block content %}
   <div class="row" style="padding-top: 25px;">
-    <div class="col-2"></div>
-    <div class="col-8">
-        <a style="margin-left: 95%; margin-bottom: 10px;" href="" class="btn btn-success"> + </a>
-        <table class="table">
-            <thead>
-                <tr>
+    <div class="col-12">
+        <a style="margin-left: 95%; margin-bottom: 10px;" href="" class="btn btn-success">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Transactions</h3>
+              <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+    
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover text-nowrap">
+                <thead>
+                  <tr>
                     <th>Customer</th>
                     <th>Sales</th>
                     <th>Payment Method</th>
-                    <th>Card Number</th>
                     <th>Paid Of</th>
                     <th>Create at</th>
-                    <th>Update at</th>
                     <th></th>
-                </tr>
-            </thead>
-            <tbody>
-              {% for t in t_all %}
-                  <tr>
-                      <td>
-                          {{t.member}}
-                      </td>
-                      <td>
-                          {{t.sales}}
-                      </td>
-                      <td>
-                          {{t.payment_method}}
-                      </td>
-                      <td>
-                          {{t.card_number}}
-                      </td>
-                      <td>
-                          {{t.paid_of}}
-                      </td>
-                      <td>
-                          {{t.create_at}}
-                      </td>
-                      <td>
-                          {{t.update_at}}
-                      </td>
-                      <td>
-                          <a href="/detail_transaction/{{t.id}}" class="btn btn-primary">Detail Items</a>
-                          <a href="" class="btn btn-danger">Delete</a>
-                      </td>
                   </tr>
-              {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                  {% for t in t_all %}
+                  <tr>
+                        <td>{{t.member}}</td>
+                        <td>{{t.sales}}</td>
+                        <td>{{t.payment_method}}</td>
+                        <td>{{t.paid_of}}</td>
+                        <td>{{t.create_at}}</td>
+                        <td>
+                            <a href="/transactions/detail_transaction/{{t.id}}" class="btn btn-secondary">
+                                <i class="fas fa-shopping-cart"></i>
+                            </a>
+                            <a href="" class="btn btn-info">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="" class="btn btn-danger">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
     </div>
-    <div class="col-2"></div>
   </div>
 {% endblock content %}

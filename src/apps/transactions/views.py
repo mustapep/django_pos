@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transactions, DetailTransaction
 from apps.items.models import Items
-from .forms import SalesCreateOrderForm
+from .forms import SalesCreateOrderForm, SearchForm
 from datetime import datetime
 
 
@@ -25,6 +25,7 @@ class DetailTransactionView(View):
 
     def get(self, request, id):
         form = SalesCreateOrderForm(request.POST)
+        search = SearchForm(request.POST)
         itm_all = Items.objects.order_by("categories")
         trn = Transactions.objects.get(id=id)
         dt = DetailTransaction.objects.filter(transaction=trn)
@@ -36,6 +37,7 @@ class DetailTransactionView(View):
         return render(request, self.template_name, {
             'dt': dt,
             'form': form,
+            'srch': search,
             'items': itm_all[1],
             'total': total,
             'obj': trn,
