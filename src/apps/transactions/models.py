@@ -25,7 +25,7 @@ class Transactions(models.Model):
     update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.sales)
+        return str(self.member)
 
     class Meta:
         db_table = 'transactions'

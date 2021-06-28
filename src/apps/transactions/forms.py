@@ -2,11 +2,22 @@ from django import forms
 from .models import Transactions
 from apps.items.models import Items
 from apps.accounts.models import Members, Sales
+from apps.items.models import Categories, Items
 from apps.transactions.models import PaymentMethods
 
 
 class SalesCreateOrderForm(forms.Form):
-    quantity = forms.IntegerField()
+    item = forms.ModelChoiceField(queryset=Items.objects.order_by('name'),widget=
+    forms.Select(attrs={
+        'class': 'form-control',
+        'placeholder': '- - items - -'
+    }))
+    quantity = forms.IntegerField(label='Quantity',widget=forms.TextInput(
+        attrs={
+            'class':'form-control',
+            'placeholder': 'quantity'
+        }
+    ))
 
 class SearchForm(forms.Form):
     search = forms.CharField(widget=forms.TextInput(

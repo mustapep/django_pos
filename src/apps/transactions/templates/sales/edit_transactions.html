@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col"></div>
         <div class="col">
-            <form action="">
+            <form action="/transactions/{{id}}/update" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="">

@@ -1,6 +1,6 @@
 {% extends "base/dasboard.html" %}
 {% block content %}
-<div class="container">
+<!-- <div class="container">
     <div class="row">
         <div class="col"></div>
         <div class="col"></div>
@@ -48,5 +48,114 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+<div class="invoice p-3 mb-3">
+    <!-- title row -->
+    <div class="row">
+      <div class="col-12">
+        <h4>
+          Transactions<small class="float-right">Date: {{obj.create_at}}</small>
+        </h4>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- info row -->
+    <div class="row invoice-info">
+      <div class="col-sm-4 invoice-col">
+          <form action="/transactions/{{id}}/detail_transaction/save" method="POST">
+              {% csrf_token %}
+              <div class="form-group">
+                  <label for="">
+                      {{form.item.label}}
+                  </label>
+                  {{form.item}}
+              </div>
+              <div class="form-group">
+                    {{form.quantity}}
+              </div>
+              <div class="form-group">
+                  <a href="/transactions" class="btn btn-danger">Cancel</a>
+                  <button class="btn btn-success" type="submit">Add Item</button>
+              </div>
+          </form>
+      </div>
+      <!-- /.col -->
+      
+      <!-- /.col -->
+      <div class="col-sm-8 invoice-col">
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <!-- Table row -->
+    <div class="row">
+      <div class="col-12 table-responsive">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Qty</th>
+            <th>Item</th>
+            <th>price</th>
+            <th>Description</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for d in dt %}
+          <tr>
+            <td>{{d.quantity}}</td>
+            <td>{{d.detail_item}}</td>
+            <td>{{d.detail_item.price}}</td>
+            <td>{{d.detail_item.description}}</td>
+            <td>
+                <a href="/transactions/{{id}}/detail_transaction/{{d.id}}/delete" class="btn btn-danger">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <div class="row">
+      <!-- accepted payments column -->
+      <!-- /.col -->
+      <div class="col-6">
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr>
+              <th style="width:50%">Total Items:</th>
+              <td>{{t_i}}</td>
+            </tr>
+            <tr>
+              <th>Subtotal</th>
+              <td>Rp.{{t_p}}</td>
+            </tr>
+          </tbody></table>
+        </div>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <!-- this row will not appear when printing -->
+    <div class="row no-print">
+      <div class="col-12">
+        <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+        <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
+          Payment
+        </button>
+        <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
+          <i class="fas fa-download"></i> Generate PDF
+        </button>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
