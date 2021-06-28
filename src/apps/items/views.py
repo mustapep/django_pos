@@ -94,5 +94,4 @@ class DeleteItemView(LoginRequiredMixin, View):
     def get(self, request, id):
         obj = Items.objects.get(id=id)
         obj.delete()
-        obj.save()
         return redirect('/items')
