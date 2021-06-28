@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transactions, DetailTransaction
 from apps.items.models import Items
-from .forms import SalesCreateOrderForm, SearchForm
+from apps.accounts.models import Members
+from .forms import SalesCreateOrderForm, SearchForm, TransactionForm
 from datetime import datetime
 
 
@@ -78,6 +79,57 @@ class PayingView(View):
         return redirect('/transactions')
 
 
-class AddDetailTransactionView(View): #pas pencet tombol pesan maka mengambil id_trans, items_id, sama quantity
+class AddDetailTransactionView(View):
 
-    pass
+    template_name = 'sales/add_transactions.html'
+
+    def get(self, request):
+
+        form = TransactionForm(request.POST)
+
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data['member'])
+            print(type(form.cleaned_data['member']))
+            trn = Transactions()
+            trn.member = form.cleaned_data['member']
+            trn.sales = form.cleaned_data['sales']
+            trn.payment_method = form.cleaned_data['payment_method']
+            trn.card_number = form.cleaned_data['card_number']
+            trn.save()
+            return redirect('/transactions')
+
+        return redirect('/transactions')
+
+
+class EditTransactionView(View):
+    template_name = 'sales/edit_transactions.html'
+
+    def get(self, request, id):
+
+        obj = Transactions.objects.get(id=id)
+        print(obj.card_number)
+
+        data = {
+            'member': obj.member,
+            'sales': obj.sales,
+            'payment_method': obj.payment_method,
+            'card_number': obj.card_number,
+        }
+        form = TransactionForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+
+class DeleteTransactionsView(View):
+
+    def get(self, request, id):
+        trn = Transactions.objects.get(id=id)
+        trn.delete()
+        return redirect('/transactions')
