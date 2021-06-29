@@ -77,3 +77,36 @@ class CustomersForm(forms.Form):
         'class': 'form-control'
     },choices=GENDER))
     photo = forms.ImageField(required=False)
+
+
+class SalesForm(forms.Form):
+    username = forms.CharField(label="Username", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+    first_name = forms.CharField(label="First Name", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+    last_name = forms.CharField(label="Last Name", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+    password = forms.CharField(label="Password", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'type': 'password'
+    }))
+
+    password2 = forms.CharField(label="Confirm Password", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'type': 'password'
+    }))
+    
+    address = forms.CharField(label="Address", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+    }))
+    
+    nik_numb = forms.CharField(label="NIK", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+    }))
+
+    ktp_image = forms.ImageField()

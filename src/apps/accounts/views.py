@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import LoginForm, RegisterMemberForm, CustomersForm
+from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm
 from django.http import HttpResponse
-from .models import User, Members
+from .models import User, Members, Sales
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -107,7 +107,7 @@ class LogoutView(View):
 "'CRUD Customer View'"
 
 class ListCustomerView(LoginRequiredMixin, View):
-    template_name = 'sales/list_customer.html'
+    template_name = 'admin/list_customer.html'
     login_url = '/login'
 
     def get(self, request):
@@ -118,7 +118,7 @@ class ListCustomerView(LoginRequiredMixin, View):
         })
 
 class AddCustomerView(View):
-    template_name = 'sales/add_customers.html'
+    template_name = 'admin/add_customers.html'
 
     def get(self, request):
         form = CustomersForm()
@@ -146,7 +146,7 @@ class AddCustomerView(View):
 
 
 class EditCustomerView(View):
-    template_name = 'sales/edit_customers.html'
+    template_name = 'admin/edit_customers.html'
 
     def get(self, request, id):
         obj = Members.objects.get(id=id)
@@ -191,15 +191,64 @@ class DeleteMemberView(View):
 "'End CRUD'"
 
 
-
-
+"'Sales CRUD'"
 class ListSalesView(LoginRequiredMixin, View):
-
-    template_name = 'sales/list_sales.html'
+    template_name = 'admin/list_sales.html'
     login_url = '/login'
 
     def get(self, request):
-        return render(request, self.template_name)
+        obj = Sales.objects.filter(user__groups__name='sales')
+        return render(request, self.template_name, {
+            'obj': obj
+        })
+
+
+class AddSalesView(View):
+    template_name = 'admin/add_sales.html'
+
+    def get(self, request):
+        print(request.POST)
+        print(request.FILES)
+        form = SalesForm()
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+
+    def post(self, request):
+        form = SalesForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['password'] == form.cleaned_data['password2']:
+                usr = User.objects.create_user(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+                grp = Group.objects.get(name='sales')
+                usr.first_name = form.cleaned_data['first_name']
+                usr.last_name = form.cleaned_data['last_name']
+                usr.groups.add(grp)
+                usr.save()
+                sales = Sales()
+                sales.user = usr
+                sales.address = form.cleaned_data['address']
+                sales.nik_numb = int(form.cleaned_data['nik_numb'])
+                sales.ktp_image = request.FILES['ktp_image']
+                sales.save()
+                return redirect('/accounts/sales')
+            messages.error(request, "Password is wrong")
+        return HttpResponse(form.errors)
+
+
+class DeleteSalesView(View):
+    def get(self, request, id):
+        s = Sales.objects.get(id=id)
+        s.delete()
+        return redirect('/accounts/sales')
+
+
+
+"'END SALES'"
+
+
+
+
 
 
 class AdminLandingPageView(View):

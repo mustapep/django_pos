@@ -25,6 +25,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     template_name = 'list_detail_trans.html'
     permission_required = [('transactions.view_detailtransaction')]
+    login_url = '/login'
 
     def get(self, request, id):
         form = SalesCreateOrderForm(request.POST)
