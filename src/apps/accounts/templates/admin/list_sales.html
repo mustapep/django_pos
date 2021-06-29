@@ -1,0 +1,60 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+<div class="row" style="padding-top: 25px;">
+    <div class="col-12">
+        <a href="/accounts/sales/add" style="margin-left: 95%; margin-bottom: 10px;" class="btn btn-success">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+  </div>
+<div class="card">
+    <div class="card-header">
+      <h3 class="card-title" style="color: aliceblue;">Sales</h3>
+      <div class="card-tools">
+        <div class="input-group input-group-sm" style="width: 150px;">
+          <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-default">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body table-responsive p-0">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Address</th>
+            <th>NIK</th>
+            <th>Create at</th>
+            <th>Create at</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for o in obj %}
+            <tr>
+                <td>{{o.user}}</td>
+                <td>{{o.address}}</td>
+                <td>{{o.nik_numb}}</td>
+                <td>{{o.ktp_image}}</td>
+                <td>{{o.create_at}}</td>
+                <td>
+                    <a href="/accounts/sales/{{o.id}}/edit" class="btn btn-info">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="/accounts/sales/{{o.id}}/delete" class="btn btn-danger">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </td>
+          </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- /.card-body -->
+  </div>
+{% endblock content %}
