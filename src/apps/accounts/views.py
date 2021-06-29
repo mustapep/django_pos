@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import LoginForm, RegisterMemberForm
+from .forms import LoginForm, RegisterMemberForm, CustomersForm
 from django.http import HttpResponse
 from .models import User, Members
 from django.contrib import messages
@@ -104,8 +104,98 @@ class LogoutView(View):
         return redirect('/login')
 
 
-class CustomerLandingPageView(LoginRequiredMixin, View):
-    template_name = 'customers/customer_landingPage.html'
+"'CRUD Customer View'"
+
+class ListCustomerView(LoginRequiredMixin, View):
+    template_name = 'sales/list_customer.html'
+    login_url = '/login'
+
+    def get(self, request):
+
+        obj = Members.objects.all()
+        return render(request, self.template_name, {
+            'obj': obj
+        })
+
+class AddCustomerView(View):
+    template_name = 'sales/add_customers.html'
+
+    def get(self, request):
+        form = CustomersForm()
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = CustomersForm(request.POST, request.FILES)
+        print(request.POST)
+        print(request.FILES)
+        if form.is_valid():
+            print('Valid')
+            obj = Members()
+            obj.customers = form.cleaned_data['customers']
+            obj.card_member = form.cleaned_data['card_member']
+            obj.gender = form.cleaned_data['gender']
+            try:
+                obj.photo = request.FILES['photo']
+            except:
+                pass
+            obj.save()
+            return redirect('/accounts')
+        return HttpResponse(request, form.errors)
+
+
+class EditCustomerView(View):
+    template_name = 'sales/edit_customers.html'
+
+    def get(self, request, id):
+        obj = Members.objects.get(id=id)
+
+        data = {
+            "customers": obj.customers,
+            "gender": obj.gender,
+            "card_member": obj.card_member,
+            "photo": obj.photo,
+        }
+
+        form = CustomersForm(initial=data)
+
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        obj = Members.objects.get(id=id)
+        form = CustomersForm(request.POST, request.FILES)
+        if form.is_valid():
+            obj.customers = form.cleaned_data['customers']
+            obj.gender = form.cleaned_data['gender']
+            obj.card_member = form.cleaned_data['card_member']
+            try:
+                obj.photo = request.FILES['photo']
+            except:
+                pass
+            obj.save()
+            return redirect('/accounts')
+
+
+class DeleteMemberView(View):
+    def get(self, request, id):
+        obj = Members.objects.get(id=id)
+        obj.delete()
+        return redirect('/accounts')
+
+
+
+"'End CRUD'"
+
+
+
+
+class ListSalesView(LoginRequiredMixin, View):
+
+    template_name = 'sales/list_sales.html'
     login_url = '/login'
 
     def get(self, request):

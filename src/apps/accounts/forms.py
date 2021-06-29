@@ -55,3 +55,25 @@ class RegisterMemberForm(forms.Form):
     }))
 
     photo = forms.ImageField(label='Photo')
+
+
+class CustomersForm(forms.Form):
+    GENDER = (
+        ('l', 'L'),
+        ('f', "P")
+    )
+    customers = forms.ModelChoiceField(label='Members',queryset=mdl_account.User.objects.all(),widget=forms.Select(
+        attrs={
+            'class': 'form-control',
+        }
+    ))
+    card_member = forms.ModelChoiceField(label='Card Member',queryset=mdl_account.CardMembers.objects.all(), widget=forms.Select(
+        attrs={
+            'class': 'form-control'
+        }
+    ))
+    # gender = forms.CharField(label='Gender', widget=forms.ChoiceField(choices=GENDER))
+    gender = forms.CharField(label='Gender', widget=forms.Select(attrs={
+        'class': 'form-control'
+    },choices=GENDER))
+    photo = forms.ImageField(required=False)

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Categories, Items
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .forms import AddItemForm
+from .forms import ItemForm, UpdateItemForm
 from django.http import HttpResponse
 
 
@@ -16,7 +16,7 @@ class ListItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
         obj = Items.objects.all()
         print(request.user.is_authenticated)
         return render(request, self.template_name, {
-            'obj': obj
+            'obj': obj,
         })
 
 
@@ -27,13 +27,13 @@ class AddItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = [('items.add_items')]
 
     def get(self, request):
-        form = AddItemForm()
+        form = ItemForm()
         return render(request, self.template_name, {
             'form': form
         })
 
     def post(self, request):
-        form = AddItemForm(request.POST, request.FILES)
+        form = ItemForm(request.POST, request.FILES)
         print('isi request.POST : ', request.POST)
         print('isi request.FILES :', request.FILES)
         print('isi form :', form)
@@ -48,3 +48,50 @@ class AddItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
             obj.save()
             return redirect('/items')
         return HttpResponse(request, form.errors)
+
+
+class UpdateItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = [('items.change_items')]
+    template_name = 'sales/update_item.html'
+    login_url = '/login'
+
+    def get(self, request, id):
+        item = Items.objects.get(id=id)
+        print(item)
+        data = {
+            'id': item.id,
+            'categories': item.categories,
+            'name': item.name,
+            'price': item.price,
+            'description': item.description,
+            'item_img': item.item_img
+        }
+        form = ItemForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        obj = Items.objects.get(id=id)
+        form = UpdateItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            obj.categories = form.cleaned_data['category']
+            print('isi categories', form.cleaned_data['category'])
+            obj.name = form.cleaned_data['name']
+            obj.price = form.cleaned_data['price']
+            obj.description = form.cleaned_data['description']
+            try:
+                obj.item_img = request.FILES['item_img']
+                obj.save()
+            except:
+                obj.save()
+            return redirect('/items')
+        return HttpResponse(form.errors)
+
+
+class DeleteItemView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = Items.objects.get(id=id)
+        obj.delete()
+        return redirect('/items')
