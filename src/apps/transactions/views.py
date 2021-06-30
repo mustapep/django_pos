@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Transactions, DetailTransaction
+from .models import Transactions, DetailTransaction, PaymentMethods
 from apps.items.models import Items
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .forms import SalesCreateOrderForm, SearchForm, TransactionForm
+from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm
 from datetime import datetime
 
 
@@ -147,3 +147,69 @@ class DeleteTransactionsView(View):
         trn = Transactions.objects.get(id=id)
         trn.delete()
         return redirect('/transactions')
+
+
+
+
+
+"'Payment View'"
+
+class PaymentListView(View):
+    template_name = 'admin/payment_list.html'
+
+    def get(self, request):
+        obj = PaymentMethods.objects.all()
+        return render(request, self.template_name, {
+            'obj': obj
+        })
+
+
+class AddPaymentView(View):
+    template_name = 'admin/add_payment.html'
+
+    def get(self, request):
+        form = PaymentForm()
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            obj = PaymentMethods()
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/transactions/payment')
+
+
+
+class EditPamentView(View):
+    template_name = 'admin/edit_payment.html'
+
+    def get(self, request, id):
+        obj = PaymentMethods.objects.get(id=id)
+        data = {
+            'name': obj.name
+        }
+        form = PaymentForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        form = PaymentForm(request.POST)
+        obj = PaymentMethods.objects.get(id=id)
+        if form.is_valid():
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/transactions/payment')
+
+
+
+class DeletePaymentView(View):
+
+    def get(self, request, id):
+        obj = PaymentMethods.objects.get(id=id)
+        obj.delete()
+        return redirect('/transactions/payment')

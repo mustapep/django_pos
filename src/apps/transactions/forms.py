@@ -51,3 +51,10 @@ class TransactionForm(forms.Form):
         }
     ))
 
+
+class PaymentForm(forms.Form):
+    name = forms.CharField(label='Name', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control'
+        }
+    ))
