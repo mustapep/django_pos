@@ -36,7 +36,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
         total = []
         total_item = []
         for d in dt:
-            total.append(d.detail_item.price*d.quantity)
+            total.append(d.item_price*d.quantity)
             total_item.append(d.quantity)
         return render(request, self.template_name, {
             'dt': dt,
@@ -56,6 +56,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             dt = DetailTransaction()
             dt.transaction = trn
             dt.detail_item = form.cleaned_data['item']
+            dt.item_price = int(dt.detail_item.price)
             dt.quantity = form.cleaned_data['quantity']
             dt.save()
             return redirect(f'/transactions/{id}/detail_transaction')

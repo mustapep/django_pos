@@ -21,6 +21,7 @@ class Transactions(models.Model):
     payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, related_name='payment_method')
     card_number = models.IntegerField(null=True, blank=True)
     paid_of = models.BooleanField(default=False)
+    customer_purchase = models.IntegerField(null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
@@ -35,6 +36,7 @@ class DetailTransaction(models.Model):
     transaction = models.ForeignKey(Transactions, on_delete=models.CASCADE, related_name='trans')
     detail_item = models.ForeignKey(Items, on_delete=models.CASCADE, related_name='dti')
     quantity = models.IntegerField(default=1)
+    item_price = models.IntegerField(null=True, blank=True)
     create_at = models.DateField(auto_now_add=True)
     update_at = models.DateField(auto_now=True, null=True)
 
