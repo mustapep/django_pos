@@ -1,0 +1,27 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+  <div class="container">
+      <div class="row">
+          <div class="col">
+              <form action="/transactions/payment/{{id}}/update" method="POST" >
+                  {% csrf_token %}
+                  <div class="row">
+                      <div class="col"></div>
+                      <div class="col">
+                        <h2>Edit Payment Method</h2>
+                          <div class="form-group">
+                              <label for="">{{form.name.label}}</label>
+                              {{form.name}}
+                          </div>
+                          <div class="form-group">
+                            <a href="/transactions/payment" class="btn btn-danger">Cancel</a>
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                      </div>
+                      <div class="col"></div>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+{% endblock content %}

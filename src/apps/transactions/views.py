@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Transactions, DetailTransaction
+from .models import Transactions, DetailTransaction, PaymentMethods
 from apps.items.models import Items
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .forms import SalesCreateOrderForm, SearchForm, TransactionForm
+from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm
 from datetime import datetime
 
 
@@ -25,6 +25,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     template_name = 'list_detail_trans.html'
     permission_required = [('transactions.view_detailtransaction')]
+    login_url = '/login'
 
     def get(self, request, id):
         form = SalesCreateOrderForm(request.POST)
@@ -35,7 +36,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
         total = []
         total_item = []
         for d in dt:
-            total.append(d.detail_item.price*d.quantity)
+            total.append(d.item_price*d.quantity)
             total_item.append(d.quantity)
         return render(request, self.template_name, {
             'dt': dt,
@@ -55,6 +56,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             dt = DetailTransaction()
             dt.transaction = trn
             dt.detail_item = form.cleaned_data['item']
+            dt.item_price = int(dt.detail_item.price)
             dt.quantity = form.cleaned_data['quantity']
             dt.save()
             return redirect(f'/transactions/{id}/detail_transaction')
@@ -93,13 +95,17 @@ class AddDetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View
     def post(self, request):
         form = TransactionForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data['member'])
+            print(form.cleaned_data['card_number'])
             print(type(form.cleaned_data['member']))
             trn = Transactions()
             trn.member = form.cleaned_data['member']
             trn.sales = form.cleaned_data['sales']
             trn.payment_method = form.cleaned_data['payment_method']
-            trn.card_number = form.cleaned_data['card_number']
+            try:
+                trn.card_number = form.cleaned_data['card_number']
+            except:
+                pass
+
             trn.save()
             return redirect('/transactions')
 
@@ -146,3 +152,69 @@ class DeleteTransactionsView(View):
         trn = Transactions.objects.get(id=id)
         trn.delete()
         return redirect('/transactions')
+
+
+
+
+
+"'Payment View'"
+
+class PaymentListView(View):
+    template_name = 'admin/payment_list.html'
+
+    def get(self, request):
+        obj = PaymentMethods.objects.all()
+        return render(request, self.template_name, {
+            'obj': obj
+        })
+
+
+class AddPaymentView(View):
+    template_name = 'admin/add_payment.html'
+
+    def get(self, request):
+        form = PaymentForm()
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            obj = PaymentMethods()
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/transactions/payment')
+
+
+
+class EditPamentView(View):
+    template_name = 'admin/edit_payment.html'
+
+    def get(self, request, id):
+        obj = PaymentMethods.objects.get(id=id)
+        data = {
+            'name': obj.name
+        }
+        form = PaymentForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        form = PaymentForm(request.POST)
+        obj = PaymentMethods.objects.get(id=id)
+        if form.is_valid():
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/transactions/payment')
+
+
+
+class DeletePaymentView(View):
+
+    def get(self, request, id):
+        obj = PaymentMethods.objects.get(id=id)
+        obj.delete()
+        return redirect('/transactions/payment')
