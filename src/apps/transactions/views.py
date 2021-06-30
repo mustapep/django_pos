@@ -94,13 +94,17 @@ class AddDetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View
     def post(self, request):
         form = TransactionForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data['member'])
+            print(form.cleaned_data['card_number'])
             print(type(form.cleaned_data['member']))
             trn = Transactions()
             trn.member = form.cleaned_data['member']
             trn.sales = form.cleaned_data['sales']
             trn.payment_method = form.cleaned_data['payment_method']
-            trn.card_number = form.cleaned_data['card_number']
+            try:
+                trn.card_number = form.cleaned_data['card_number']
+            except:
+                pass
+
             trn.save()
             return redirect('/transactions')
 

@@ -45,11 +45,11 @@ class TransactionForm(forms.Form):
             'class': 'form-control'
         }
     ))
-    card_number = forms.CharField(label='Card Number', widget=forms.TextInput(
+    card_number = forms.IntegerField(label='Card Number', widget=forms.TextInput(
         attrs={
             'class': 'form-control'
         }
-    ))
+    ), required=False)
 
 
 class PaymentForm(forms.Form):
