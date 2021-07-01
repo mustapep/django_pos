@@ -58,6 +58,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             dt.detail_item = form.cleaned_data['item']
             dt.item_price = int(dt.detail_item.price)
             dt.quantity = form.cleaned_data['quantity']
+            dt.sub_total = dt.item_price*dt.quantity
             dt.save()
             return redirect(f'/transactions/{id}/detail_transaction')
 
