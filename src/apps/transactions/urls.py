@@ -10,6 +10,7 @@ urlpatterns = [
     path('<int:id>/update', EditTransactionView.as_view()),
     path('<int:id>/delete', DeleteTransactionsView.as_view()),
     path('<int:id>/detail_transaction', DetailTransactionView.as_view()),
+    path('<int:id>/detail_transaction/purchase', CustomerPurchaseView.as_view()),
     path('<int:id>/detail_transaction/<int:dt_id>/delete', DeleteDetailTransactionsView.as_view()),
     path('<int:id>/detail_transaction/save', DetailTransactionView.as_view()),
 
