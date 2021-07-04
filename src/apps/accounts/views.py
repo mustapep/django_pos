@@ -7,17 +7,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
+from .accountmixin import IsAutenticated
 
-
-class Login(View):
+class Login(IsAutenticated, View):
     template_name = 'login.html'
 
     def get(self, request):
-        if request.user.is_authenticated:
-            if Group.objects.get(name='sales') in request.user.groups.all():
-                return redirect('/items')
-            else:
-                return redirect('/customer_landingpage')
 
         form = LoginForm(request.POST)
 
@@ -26,23 +21,18 @@ class Login(View):
         })
 
 
-class RegisterView(View):
+class RegisterView(IsAutenticated, View):
 
     template_name = 'register.html'
 
     def get(self, request):
-        if request.user.is_authenticated:
-            if Group.objects.get(name='sales') in request.user.groups.all():
-                return redirect('/items')
-            else:
-                return redirect('/customer_landingpage')
         form = RegisterMemberForm(request.POST)
         return render(request, self.template_name, {
             'form': form
         })
 
 
-class RegisterSaveView(View):
+class RegisterSaveView(IsAutenticated, View):
 
     def post(self, request):
         form = RegisterMemberForm(request.POST, request.FILES)
@@ -50,7 +40,7 @@ class RegisterSaveView(View):
             print(form)
             print('request POST :', request.POST)
             print('request FILES :', request.FILES)
-            if request.POST['password'] == request.POST['password2']:
+            if request.POST['ptransactionsassword'] == request.POST['password2']:
                 usr = User()
                 usr.username = form.cleaned_data['username']
                 usr.first_name = form.cleaned_data['first_name']
@@ -86,6 +76,9 @@ class LoginProcess(View):
                 if Group.objects.get(name='sales') in usr.groups.all():
                     login(request, usr)
                     return redirect('/items')
+                elif Group.objects.get(name='admin') in usr.groups.all():
+                    login(request, usr)
+                    return redirect('/transactions')
                 else:
                     login(request, usr)
                     return redirect('/customer_landingpage')
@@ -116,6 +109,7 @@ class ListCustomerView(LoginRequiredMixin, View):
         return render(request, self.template_name, {
             'obj': obj
         })
+
 
 class AddCustomerView(View):
     template_name = 'admin/add_customers.html'
