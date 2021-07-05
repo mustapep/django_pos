@@ -13,6 +13,11 @@ class ValidatePermissionMixin:
             perms = self.permission_required
         return perms
 
+    def get_url_redirect(self, request):
+        if self.url_redirect is None:
+            return redirect('/login')
+        return self.url_redirect
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.has_perms(self.get_perm()):
             return super().dispatch(request, *args, **kwargs)

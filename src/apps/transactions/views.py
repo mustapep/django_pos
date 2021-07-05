@@ -5,12 +5,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from datetime import datetime
 from django.http import HttpResponse
+from ..accounts.accountmixin import ValidatePermissionMixin
 
 
-class ListTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
     template_name = 'list_transaction.html'
-    permission_required = [('transactions.view_transactions')]
+    permission_required = 'transactions.view_transactions'
 
     def get(self, request):
 
@@ -24,7 +25,7 @@ class ListTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
 class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     template_name = 'list_detail_trans.html'
-    permission_required = [('transactions.view_detailtransaction')]
+    permission_required = [('transactions.view_detailtransaction'),('transactions.delete_detailtransaction')]
     login_url = '/login'
 
     def get(self, request, id):
@@ -65,7 +66,10 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             dt.save()
             return redirect(f'/transactions/{id}/detail_transaction')
 
-class DeleteDetailTransactionsView(View):
+
+class DeleteDetailTransactionsView(PermissionRequiredMixin, View):
+    permission_required = [('transactions.delete_detailtransaction')]
+
     def get(self, request, id, dt_id):
         dt = DetailTransaction.objects.get(id=dt_id)
         dt.delete()
@@ -150,7 +154,8 @@ class EditTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             return redirect('/transactions')
 
 
-class DeleteTransactionsView(View):
+class DeleteTransactionsView(PermissionRequiredMixin, View):
+    permission_required = [('transactions.delete_transactions')]
 
     def get(self, request, id):
         trn = Transactions.objects.get(id=id)
