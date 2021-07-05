@@ -7,12 +7,20 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
-from .accountmixin import IsAutenticated
 
-class Login(IsAutenticated, View):
+
+class Login(View):
+
     template_name = 'login.html'
 
     def get(self, request):
+        if request.user.is_authenticated:
+            if Group.objects.get(name='sales') in request.user.groups.all():
+                return redirect('/transactions')
+            elif Group.objects.get(name='admin') in request.user.groups.all():
+                return redirect('/items')
+            else:
+                return redirect('/customer_landingpage')
 
         form = LoginForm(request.POST)
 
@@ -21,20 +29,28 @@ class Login(IsAutenticated, View):
         })
 
 
-class RegisterView(IsAutenticated, View):
+class RegisterView(View):
 
     template_name = 'register.html'
 
     def get(self, request):
+        if request.user.is_authenticated:
+            if Group.objects.get(name='sales') in request.user.groups.all():
+                return redirect('/transactions')
+            elif Group.objects.get(name='admin') in request.user.groups.all():
+                return redirect('/items')
+            else:
+                return redirect('/customer_landingpage')
         form = RegisterMemberForm(request.POST)
         return render(request, self.template_name, {
             'form': form
         })
 
 
-class RegisterSaveView(IsAutenticated, View):
+class RegisterSaveView(View):
 
     def post(self, request):
+
         form = RegisterMemberForm(request.POST, request.FILES)
         if form.is_valid():
             print(form)
@@ -75,10 +91,10 @@ class LoginProcess(View):
             if usr.is_authenticated:
                 if Group.objects.get(name='sales') in usr.groups.all():
                     login(request, usr)
-                    return redirect('/items')
+                    return redirect('/transactions')
                 elif Group.objects.get(name='admin') in usr.groups.all():
                     login(request, usr)
-                    return redirect('/transactions')
+                    return redirect('/items')
                 else:
                     login(request, usr)
                     return redirect('/customer_landingpage')
@@ -98,6 +114,7 @@ class LogoutView(View):
 
 
 "'CRUD Customer View'"
+
 
 class ListCustomerView(LoginRequiredMixin, View):
     template_name = 'admin/list_customer.html'
@@ -186,6 +203,8 @@ class DeleteMemberView(View):
 
 
 "'Sales CRUD'"
+
+
 class ListSalesView(LoginRequiredMixin, View):
     template_name = 'admin/list_sales.html'
     login_url = '/login'
@@ -239,10 +258,6 @@ class DeleteSalesView(View):
 
 
 "'END SALES'"
-
-
-
-
 
 
 class AdminLandingPageView(View):

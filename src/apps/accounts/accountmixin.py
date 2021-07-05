@@ -2,17 +2,19 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 
 
-class IsAutenticated:
+class ValidatePermissionMixin:
+    url_redirect = None
+    permission_required = ''
 
-    def check_auth(self, request):
+    def get_perm(self):
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
-        if request.user.is_authenticated:
-            if Group.objects.get(name='sales') in request.user.groups.all():
-                return redirect('/transactions')
-            elif Group.objects.get(name='admin') in request.user.groups.all():
-                return redirect('/items')
-            else:
-                return redirect('/customer_landingpage')
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.has_perms(self.get_perm()):
+            return super().dispatch(request, *args, **kwargs)
+        return redirect('/login')
 
-    def test(self):
-        print('Ini Methodnya class is_auth')
