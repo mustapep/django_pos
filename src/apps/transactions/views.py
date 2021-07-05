@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transactions, DetailTransaction, PaymentMethods
-from apps.items.models import Items
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm
+from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from datetime import datetime
+from django.http import HttpResponse
+from ..accounts.accountmixin import ValidatePermissionMixin
 
 
-class ListTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
     template_name = 'list_transaction.html'
-    permission_required = [('transactions.view_transactions')]
+    permission_required = 'transactions.view_transactions'
 
     def get(self, request):
 
@@ -24,11 +25,12 @@ class ListTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
 class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     template_name = 'list_detail_trans.html'
-    permission_required = [('transactions.view_detailtransaction')]
+    permission_required = [('transactions.view_detailtransaction'),('transactions.delete_detailtransaction')]
     login_url = '/login'
 
     def get(self, request, id):
         form = SalesCreateOrderForm(request.POST)
+        fp = CustomerPurchaseForm(request.POST)
         search = SearchForm(request.POST)
         trn = Transactions.objects.get(id=id)
         dt = DetailTransaction.objects.filter(transaction=trn)
@@ -38,6 +40,7 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
         for d in dt:
             total.append(d.item_price*d.quantity)
             total_item.append(d.quantity)
+
         return render(request, self.template_name, {
             'dt': dt,
             'form': form,
@@ -46,7 +49,8 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             'obj': trn,
             't_i': sum(total_item),
             't_p': sum(total),
-            'id': id
+            'id': id,
+            'fp': fp
         })
 
     def post(self, request, id):
@@ -58,10 +62,14 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             dt.detail_item = form.cleaned_data['item']
             dt.item_price = int(dt.detail_item.price)
             dt.quantity = form.cleaned_data['quantity']
+            dt.sub_total = dt.item_price*dt.quantity
             dt.save()
             return redirect(f'/transactions/{id}/detail_transaction')
 
-class DeleteDetailTransactionsView(View):
+
+class DeleteDetailTransactionsView(PermissionRequiredMixin, View):
+    permission_required = [('transactions.delete_detailtransaction')]
+
     def get(self, request, id, dt_id):
         dt = DetailTransaction.objects.get(id=dt_id)
         dt.delete()
@@ -146,7 +154,8 @@ class EditTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             return redirect('/transactions')
 
 
-class DeleteTransactionsView(View):
+class DeleteTransactionsView(PermissionRequiredMixin, View):
+    permission_required = [('transactions.delete_transactions')]
 
     def get(self, request, id):
         trn = Transactions.objects.get(id=id)
@@ -218,3 +227,16 @@ class DeletePaymentView(View):
         obj = PaymentMethods.objects.get(id=id)
         obj.delete()
         return redirect('/transactions/payment')
+
+
+class CustomerPurchaseView(View):
+
+    def post(self, request, id):
+        form = CustomerPurchaseForm(request.POST)
+        if form.is_valid():
+            trn = Transactions.objects.get(id=id)
+            trn.customer_purchase = int(form.cleaned_data['paying_off'])
+            trn.paid_of = True
+            trn.save()
+            return redirect('/transactions')
+        return HttpResponse(request, form.errors)

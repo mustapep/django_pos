@@ -10,11 +10,14 @@ from django.contrib.auth.models import Group
 
 
 class Login(View):
+
     template_name = 'login.html'
 
     def get(self, request):
         if request.user.is_authenticated:
             if Group.objects.get(name='sales') in request.user.groups.all():
+                return redirect('/transactions')
+            elif Group.objects.get(name='admin') in request.user.groups.all():
                 return redirect('/items')
             else:
                 return redirect('/customer_landingpage')
@@ -33,6 +36,8 @@ class RegisterView(View):
     def get(self, request):
         if request.user.is_authenticated:
             if Group.objects.get(name='sales') in request.user.groups.all():
+                return redirect('/transactions')
+            elif Group.objects.get(name='admin') in request.user.groups.all():
                 return redirect('/items')
             else:
                 return redirect('/customer_landingpage')
@@ -45,12 +50,13 @@ class RegisterView(View):
 class RegisterSaveView(View):
 
     def post(self, request):
+
         form = RegisterMemberForm(request.POST, request.FILES)
         if form.is_valid():
             print(form)
             print('request POST :', request.POST)
             print('request FILES :', request.FILES)
-            if request.POST['password'] == request.POST['password2']:
+            if request.POST['ptransactionsassword'] == request.POST['password2']:
                 usr = User()
                 usr.username = form.cleaned_data['username']
                 usr.first_name = form.cleaned_data['first_name']
@@ -85,6 +91,9 @@ class LoginProcess(View):
             if usr.is_authenticated:
                 if Group.objects.get(name='sales') in usr.groups.all():
                     login(request, usr)
+                    return redirect('/transactions')
+                elif Group.objects.get(name='admin') in usr.groups.all():
+                    login(request, usr)
                     return redirect('/items')
                 else:
                     login(request, usr)
@@ -106,6 +115,7 @@ class LogoutView(View):
 
 "'CRUD Customer View'"
 
+
 class ListCustomerView(LoginRequiredMixin, View):
     template_name = 'admin/list_customer.html'
     login_url = '/login'
@@ -116,6 +126,7 @@ class ListCustomerView(LoginRequiredMixin, View):
         return render(request, self.template_name, {
             'obj': obj
         })
+
 
 class AddCustomerView(View):
     template_name = 'admin/add_customers.html'
@@ -192,6 +203,8 @@ class DeleteMemberView(View):
 
 
 "'Sales CRUD'"
+
+
 class ListSalesView(LoginRequiredMixin, View):
     template_name = 'admin/list_sales.html'
     login_url = '/login'
@@ -245,10 +258,6 @@ class DeleteSalesView(View):
 
 
 "'END SALES'"
-
-
-
-
 
 
 class AdminLandingPageView(View):

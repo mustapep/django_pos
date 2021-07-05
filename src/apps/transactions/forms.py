@@ -50,6 +50,7 @@ class TransactionForm(forms.Form):
             'class': 'form-control'
         }
     ), required=False)
+    
 
 
 class PaymentForm(forms.Form):
@@ -58,3 +59,15 @@ class PaymentForm(forms.Form):
             'class': 'form-control'
         }
     ))
+
+
+class CustomerPurchaseForm(forms.Form):
+    paying_off = forms.CharField(label='Paying Off',widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'paying off'
+        }
+    ))
+
+
+

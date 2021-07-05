@@ -37,6 +37,7 @@ class DetailTransaction(models.Model):
     detail_item = models.ForeignKey(Items, on_delete=models.CASCADE, related_name='dti')
     quantity = models.IntegerField(default=1)
     item_price = models.IntegerField(null=True, blank=True)
+    sub_total = models.IntegerField(null=True, blank=True)
     create_at = models.DateField(auto_now_add=True)
     update_at = models.DateField(auto_now=True, null=True)
 

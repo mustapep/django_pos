@@ -45,20 +45,22 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <th>Qty</th>
             <th>Item</th>
-            <th>price</th>
             <th>Description</th>
+            <th>price</th>
+            <th>Qty</th>
+            <th>Sub Total</th>
             <th></th>
           </tr>
           </thead>
           <tbody>
           {% for d in dt %}
           <tr>
-            <td>{{d.quantity}}</td>
             <td>{{d.detail_item}}</td>
-            <td>{{d.item_price}}</td>
             <td>{{d.detail_item.description}}</td>
+            <td>{{d.item_price}}</td>
+            <td>{{d.quantity}}</td>
+            <td>{{d.sub_total}}</td>
             <td>
                 <a href="/transactions/{{id}}/detail_transaction/{{d.id}}/delete" class="btn btn-danger">
                     <i class="far fa-trash-alt"></i>
@@ -80,32 +82,31 @@
 
         <div class="table-responsive">
           <table class="table">
-            <tbody>
-            <tr>
-              <th style="width:50%">Total Items:</th>
-              <td>{{t_i}}</td>
-            </tr>
-            <tr>
-              <th>Subtotal</th>
-              <td>Rp.{{t_p}}</td>
-            </tr>
-          </tbody></table>
+            <form action="/transactions/{{id}}/detail_transaction/purchase" method="POST">
+              {% csrf_token %}
+              <tbody>
+                <tr>
+                  <th style="width:50%">Total Items:</th>
+                  <td>{{t_i}}</td>
+                </tr>
+                <tr>
+                  <th>Total</th>
+                  <td>Rp.{{t_p}}</td>
+                </tr>
+                <tr>
+                  <th>{{fp.paying_off.label}}</th>
+                  <td>{{fp.paying_off}}</td>
+                </tr>
+                <tr>
+                  <th></th>
+                  <td style="padding-left: 173px;">
+                    <button class="btn btn-info" type="submit">Submit</button>
+                  </td>
+                </tr>
+              </tbody>
+            </form>
+        </table>
         </div>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
-
-    <!-- this row will not appear when printing -->
-    <div class="row no-print">
-      <div class="col-12">
-        <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-        <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
-          Payment
-        </button>
-        <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
-          <i class="fas fa-download"></i> Generate PDF
-        </button>
       </div>
     </div>
   </div>
