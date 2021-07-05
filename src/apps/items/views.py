@@ -4,11 +4,12 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .forms import ItemForm, UpdateItemForm
 from django.http import HttpResponse
+from mypermissionmixin.custommixin import ValidatePermissionMixin
 
 
 
-class ListItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
-    permission_required = [('items.view_items')]
+class ListItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    permission_required = 'items.view_items'
     template_name = 'sales/list_item.html'
     login_url = '/login'
 

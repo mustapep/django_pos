@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from datetime import datetime
 from django.http import HttpResponse
-from ..accounts.accountmixin import ValidatePermissionMixin
+from mypermissionmixin.custommixin import ValidatePermissionMixin
 
 
 class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
