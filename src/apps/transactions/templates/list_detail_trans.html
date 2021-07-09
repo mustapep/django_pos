@@ -1,5 +1,6 @@
 {% extends "base/dasboard.html" %}
 {% block content %}
+{{obj.paid_of}}
 <div class="invoice p-3 mb-3">
     <!-- title row -->
     <div class="row">
@@ -12,24 +13,26 @@
     </div>
     <!-- info row -->
     <div class="row invoice-info">
-      <div class="col-sm-4 invoice-col">
-          <form action="/transactions/{{id}}/detail_transaction/save" method="POST">
-              {% csrf_token %}
-              <div class="form-group">
-                  <label for="">
-                      {{form.item.label}}
-                  </label>
-                  {{form.item}}
-              </div>
-              <div class="form-group">
-                    {{form.quantity}}
-              </div>
-              <div class="form-group">
-                  <a href="/transactions" class="btn btn-danger">Cancel</a>
-                  <button class="btn btn-success" type="submit">Add Item</button>
-              </div>
-          </form>
-      </div>
+      {% if not obj.paid_of %}
+          <div class="col-sm-4 invoice-col">
+            <form action="/transactions/{{id}}/detail_transaction/save" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="">
+                        {{form.item.label}}
+                    </label>
+                    {{form.item}}
+                </div>
+                <div class="form-group">
+                      {{form.quantity}}
+                </div>
+                <div class="form-group">
+                    <a href="/transactions" class="btn btn-danger">Cancel</a>
+                    <button class="btn btn-success" type="submit">Add Item</button>
+                </div>
+            </form>
+          </div>
+        {% endif %}
       <!-- /.col -->
       
       <!-- /.col -->
@@ -61,11 +64,14 @@
             <td>{{d.item_price}}</td>
             <td>{{d.quantity}}</td>
             <td>{{d.sub_total}}</td>
+            {% if not obj.paid_of %}
             <td>
-                <a href="/transactions/{{id}}/detail_transaction/{{d.id}}/delete" class="btn btn-danger">
-                    <i class="far fa-trash-alt"></i>
-                </a>
-            </td>
+              <a href="/transactions/{{id}}/detail_transaction/{{d.id}}/delete" class="btn btn-danger">
+                  <i class="far fa-trash-alt"></i>
+              </a>
+          </td>
+              
+            {% endif %}
           </tr>
           {% endfor %}
           </tbody>
@@ -79,7 +85,6 @@
       <!-- accepted payments column -->
       <!-- /.col -->
       <div class="col-6">
-
         <div class="table-responsive">
           <table class="table">
             <form action="/transactions/{{id}}/detail_transaction/purchase" method="POST">
@@ -93,6 +98,7 @@
                   <th>Total</th>
                   <td>Rp.{{t_p}}</td>
                 </tr>
+                {% if not obj.paid_of %}
                 <tr>
                   <th>{{fp.paying_off.label}}</th>
                   <td>{{fp.paying_off}}</td>
@@ -103,6 +109,8 @@
                     <button class="btn btn-info" type="submit">Submit</button>
                   </td>
                 </tr>
+                  
+                {% endif %}
               </tbody>
             </form>
         </table>

@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect
 from .models import Categories, Items
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMixin
 from .forms import ItemForm, UpdateItemForm
 from django.http import HttpResponse
+from mypermissionmixin.custommixin import ValidatePermissionMixin
 
 
 
-class ListItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
-    permission_required = [('items.view_items')]
+class ListItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    permission_required = 'items.view_items'
     template_name = 'sales/list_item.html'
     login_url = '/login'
 
@@ -20,7 +21,7 @@ class ListItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
         })
 
 
-class AddItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class AddItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     template_name = 'sales/add_item.html'
     login_url = '/login'
@@ -50,7 +51,7 @@ class AddItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
         return HttpResponse(request, form.errors)
 
 
-class UpdateItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = [('items.change_items')]
     template_name = 'sales/update_item.html'
     login_url = '/login'
@@ -58,9 +59,11 @@ class UpdateItemView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request, id):
         item = Items.objects.get(id=id)
         print(item)
+        print(item.categories)
+        print(type(item.categories))
         data = {
             'id': item.id,
-            'categories': item.categories,
+            'category': item.categories,
             'name': item.name,
             'price': item.price,
             'description': item.description,

@@ -5,7 +5,8 @@ from django.http import HttpResponse
 from .models import User, Members, Sales
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from mypermissionmixin.custommixin import ValidatePermissionMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 
 
@@ -116,8 +117,9 @@ class LogoutView(View):
 "'CRUD Customer View'"
 
 
-class ListCustomerView(LoginRequiredMixin, View):
+class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/list_customer.html'
+    permission_required = 'accounts.view_members'
     login_url = '/login'
 
     def get(self, request):
@@ -128,8 +130,10 @@ class ListCustomerView(LoginRequiredMixin, View):
         })
 
 
-class AddCustomerView(View):
+class AddCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/add_customers.html'
+    permission_required = 'accounts.add_members'
+    login_url = '/login'
 
     def get(self, request):
         form = CustomersForm()
@@ -156,8 +160,10 @@ class AddCustomerView(View):
         return HttpResponse(request, form.errors)
 
 
-class EditCustomerView(View):
+class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/edit_customers.html'
+    permission_required = 'accounts.change_members'
+    login_url = '/login'
 
     def get(self, request, id):
         obj = Members.objects.get(id=id)
@@ -191,7 +197,10 @@ class EditCustomerView(View):
             return redirect('/accounts')
 
 
-class DeleteMemberView(View):
+class DeleteMemberView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    permission_required = 'accounts.delete_members'
+    login_url = '/login'
+
     def get(self, request, id):
         obj = Members.objects.get(id=id)
         obj.delete()
@@ -205,19 +214,22 @@ class DeleteMemberView(View):
 "'Sales CRUD'"
 
 
-class ListSalesView(LoginRequiredMixin, View):
+class ListSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/list_sales.html'
+    permission_required = 'accounts.view_sales'
     login_url = '/login'
 
     def get(self, request):
-        obj = Sales.objects.filter(user__groups__name='sales')
+        obj = Sales.objects.all()
         return render(request, self.template_name, {
             'obj': obj
         })
 
 
-class AddSalesView(View):
+class AddSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/add_sales.html'
+    permission_required = 'accounts.add_sales'
+    login_url = '/login'
 
     def get(self, request):
         print(request.POST)
@@ -249,7 +261,9 @@ class AddSalesView(View):
         return HttpResponse(form.errors)
 
 
-class DeleteSalesView(View):
+class DeleteSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    permission_required = 'accounts.delete_sales'
+    login_url = '/login'
     def get(self, request, id):
         s = Sales.objects.get(id=id)
         s.delete()

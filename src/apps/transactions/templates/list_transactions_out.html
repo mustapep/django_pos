@@ -1,0 +1,65 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+  <div class="row" style="padding-top: 25px;">
+    <div class="col-12">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+              <h3 class="card-title" style="color: aliceblue;">Transactions</h3>
+              <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+    
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Sales</th>
+                    <th>Payment Method</th>
+                    <th>Total</th>
+                    <th>Pay at</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for t in t_all %}
+                  <tr>
+                        <td>{{t.member}}</td>
+                        <td>{{t.sales}}</td>
+                        <td>{{t.payment_method}}</td>
+                        <td>{{t.customer_purchase}}</td>
+                        <td>{{t.update_at}}</td>
+                        <td>
+                            <a href="/transactions/{{t.id}}/detail_transaction" class="btn btn-secondary">
+                                <i class="fas fa-shopping-cart"></i>
+                            </a>
+                            <a href="/transactions/{{t.id}}/edit" class="btn btn-info">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="/transactions/{{t.id}}/delete" class="btn btn-danger">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+    </div>
+  </div>
+{% endblock content %}

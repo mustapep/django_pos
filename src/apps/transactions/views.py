@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transactions, DetailTransaction, PaymentMethods
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMixin
 from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from datetime import datetime
 from django.http import HttpResponse
-from ..accounts.accountmixin import ValidatePermissionMixin
+from mypermissionmixin.custommixin import ValidatePermissionMixin
 
 
 class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
@@ -22,10 +22,21 @@ class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         })
 
 
-class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class ListTransactionsOutView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = 'list_transactions_out.html'
+
+    def get(self, request):
+        t_all = Transactions.objects.filter(paid_of=True)
+
+        return render(request, self.template_name, {
+            "t_all": t_all
+        })
+
+
+class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     template_name = 'list_detail_trans.html'
-    permission_required = [('transactions.view_detailtransaction'),('transactions.delete_detailtransaction')]
+    permission_required = 'transactions.view_detailtransaction', 'transactions.delete_detailtransaction'
     login_url = '/login'
 
     def get(self, request, id):
@@ -67,8 +78,9 @@ class DetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             return redirect(f'/transactions/{id}/detail_transaction')
 
 
-class DeleteDetailTransactionsView(PermissionRequiredMixin, View):
-    permission_required = [('transactions.delete_detailtransaction')]
+class DeleteDetailTransactionsView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    permission_required = 'transactions.delete_detailtransaction'
+    login_url = '/login'
 
     def get(self, request, id, dt_id):
         dt = DetailTransaction.objects.get(id=dt_id)
@@ -76,21 +88,10 @@ class DeleteDetailTransactionsView(PermissionRequiredMixin, View):
         return redirect(f'/transactions/{id}/detail_transaction')
 
 
-class PayingView(LoginRequiredMixin, PermissionRequiredMixin, View):
-
-    def get(self, request, id):
-        trn = Transactions.objects.get(id=id)
-        trn.paid_of = True
-        trn.update_at = datetime.now()
-        trn.save()
-
-        return redirect('/transactions')
-
-
-class AddDetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
-    permission_required = ['transactions.add_transactions']
-
+class AddTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'sales/add_transactions.html'
+    permission_required = 'transactions.add_detailtransaction'
+    login_url = '/login'
 
     def get(self, request):
 
@@ -120,9 +121,10 @@ class AddDetailTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View
         return redirect('/transactions')
 
 
-class EditTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'sales/edit_transactions.html'
-    permission_required = [('transactions.change_detailtransaction')]
+    permission_required = 'transactions.change_transactions'
+    login_url = '/login'
 
     def get(self, request, id):
 
@@ -154,7 +156,7 @@ class EditTransactionView(LoginRequiredMixin, PermissionRequiredMixin, View):
             return redirect('/transactions')
 
 
-class DeleteTransactionsView(PermissionRequiredMixin, View):
+class DeleteTransactionsView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = [('transactions.delete_transactions')]
 
     def get(self, request, id):
@@ -168,8 +170,10 @@ class DeleteTransactionsView(PermissionRequiredMixin, View):
 
 "'Payment View'"
 
-class PaymentListView(View):
+class PaymentListView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/payment_list.html'
+    permission_required = 'transactions.view_paymentmethods'
+    login_url = '/login'
 
     def get(self, request):
         obj = PaymentMethods.objects.all()
@@ -178,8 +182,9 @@ class PaymentListView(View):
         })
 
 
-class AddPaymentView(View):
+class AddPaymentView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/add_payment.html'
+    login_url = '/login'
 
     def get(self, request):
         form = PaymentForm()
@@ -197,8 +202,10 @@ class AddPaymentView(View):
 
 
 
-class EditPamentView(View):
+class EditPamentView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/edit_payment.html'
+    permission_required = 'transactions.change_paymentmethods'
+    login_url = '/login'
 
     def get(self, request, id):
         obj = PaymentMethods.objects.get(id=id)
@@ -221,7 +228,9 @@ class EditPamentView(View):
 
 
 
-class DeletePaymentView(View):
+class DeletePaymentView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    login_url = '/login'
+    permission_required = 'transactions.delete_paymentmethods'
 
     def get(self, request, id):
         obj = PaymentMethods.objects.get(id=id)
@@ -229,7 +238,9 @@ class DeletePaymentView(View):
         return redirect('/transactions/payment')
 
 
-class CustomerPurchaseView(View):
+class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    permission_required = 'transactions.change_paymentmethods'
+    login_url = '/login'
 
     def post(self, request, id):
         form = CustomerPurchaseForm(request.POST)
