@@ -59,9 +59,11 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request, id):
         item = Items.objects.get(id=id)
         print(item)
+        print(item.categories)
+        print(type(item.categories))
         data = {
             'id': item.id,
-            'categories': item.categories,
+            'category': item.categories,
             'name': item.name,
             'price': item.price,
             'description': item.description,
