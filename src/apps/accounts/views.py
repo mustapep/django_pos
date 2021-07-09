@@ -220,7 +220,7 @@ class ListSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        obj = Sales.objects.filter(user__groups__name='sales')
+        obj = Sales.objects.all()
         return render(request, self.template_name, {
             'obj': obj
         })
