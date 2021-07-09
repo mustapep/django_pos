@@ -22,6 +22,17 @@ class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         })
 
 
+class ListTransactionsOutView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = 'list_transactions_out.html'
+
+    def get(self, request):
+        t_all = Transactions.objects.filter(paid_of=True)
+
+        return render(request, self.template_name, {
+            "t_all": t_all
+        })
+
+
 class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     template_name = 'list_detail_trans.html'

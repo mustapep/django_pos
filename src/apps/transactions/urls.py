@@ -4,6 +4,7 @@ from .views import *
 app_name = 'transactoins'
 urlpatterns = [
     path('', ListTransactionView.as_view()),
+    path('out', ListTransactionsOutView.as_view()),
     path('add', AddTransactionView.as_view()),
     path('save', AddTransactionView.as_view()),
     path('<int:id>/edit', EditTransactionView.as_view()),
