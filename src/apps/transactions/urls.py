@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import *
-
+"'Edit field of Transactions Model' "
+from testing.views import CreateDataTesting 
+"''"
 app_name = 'transactoins'
 urlpatterns = [
     path('', ListTransactionView.as_view()),
@@ -21,4 +23,5 @@ urlpatterns = [
     path('payment/<int:id>/edit', EditPamentView.as_view()),
     path('payment/<int:id>/update', EditPamentView.as_view()),
     path('payment/<int:id>/delete', DeletePaymentView.as_view()),
+    path('report', TransactionsReportView.as_view()),
 ]
