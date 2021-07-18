@@ -23,5 +23,8 @@ urlpatterns = [
     path('payment/<int:id>/edit', EditPamentView.as_view()),
     path('payment/<int:id>/update', EditPamentView.as_view()),
     path('payment/<int:id>/delete', DeletePaymentView.as_view()),
-    path('report', TransactionsReportView.as_view()),
+    
+
+    path('report/annual', TransactionsReportView.as_view()),
+    path('report/monthly', MonthlyReportView.as_view()),
 ]

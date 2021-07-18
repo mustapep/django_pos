@@ -1,6 +1,7 @@
 {% extends "base/dasboard.html" %}
 {% block content %}
   <!-- <h1>{{transactions}}</h1> -->
+  <h1>Monthly</h1>
   <div class="row" style="padding-top: 25px;">
     <div class="col-12">
     </div>
@@ -20,15 +21,25 @@
           </div>
         </div>
         <div class="card-body">
-          <form action="/transactions/report/annual" method="GET">
+          <form action="/transactions/report" method="GET">
             {% csrf_token %}
             <div class="row">    
               <div class="col">
                 <div class="form-group">
-                  <label for="">Year</label>
+                  <label for="">Date Range</label>
                     <div class="input-group date" id="seach_year" data-target-input="nearest">
                         <input type="text" class="form-control datetimepicker-input" data-target="#seach_year"  name="seach_year">
                         <div class="input-group-append" data-target="#seach_year" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group" style="margin-top: 31px;">
+                    <div class="input-group date" id="seach_month" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#seach_month"   name="seach_month" >
+                        <div class="input-group-append" data-target="#seach_month" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                         </div>
                     </div>
@@ -120,9 +131,7 @@
                     {% if users.has_other_pages %}
                     <ul class="pagination">
                       {% if users.has_previous %}
-                        <li class="paginate_button page-item ">
-                          <a href="?page={{ users.previous_page_number }}">«</a>
-                        </li>
+                        <li><a href="?page={{ users.previous_page_number }}">«</a></li>
                       {% else %}
                         <li class="disabled"><span>«</span></li>
                       {% endif %}
@@ -153,7 +162,10 @@
 {% block script %}
 <script>
   $('#seach_year').datetimepicker({
-        format: 'YYYY'
+        format: 'YYYY-MM-DD'
+    });
+  $('#seach_month').datetimepicker({
+        format: 'YYYY-MM-DD'
     });
   var ctx = document.getElementById('lineChart');
   var lineChart = new Chart(ctx, {
