@@ -1,0 +1,59 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+  <div class="row">
+      <div class="col">
+        <div class="card">
+            <div class="card-header">
+              <h3 style="color: aliceblue;">List Of Categories</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                  <div class="row">
+                      <div class="col-sm-12 col-md-6"></div>
+                      <div class="col-sm-12 col-md-6"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="example2" class="table table-bordered table-hover dataTable dtr-inline" role="grid" aria-describedby="example2_info">
+                <thead>
+                <tr>
+                    <a href="" class="btn btn-success" style="margin-left: 95%;
+                    margin-bottom: 15px;">add</a>
+                </tr>
+                <tr role="row">
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Name</th>
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Create at</th>
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Update at</th>
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for o in obj %}
+                <tr >
+                    <td class="dtr-control sorting_1" tabindex="0">{{o.name}}</td>
+                    <td>
+                        {{o.create_at}}
+                    </td>
+                    <td>
+                        {{o.update_at}}
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-info">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="" class="btn btn-danger">
+                            <i class="far fa-trash-alt"></i>
+                        </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+        </div>
+            <!-- /.card-body -->
+          </div>
+      </div>
+  </div>
+{% endblock content %}

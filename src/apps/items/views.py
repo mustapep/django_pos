@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Categories, Items
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMixin
-from .forms import ItemForm, UpdateItemForm
+from .forms import *
 from django.http import HttpResponse
 from mypermissionmixin.custommixin import ValidatePermissionMixin
 
@@ -98,3 +98,32 @@ class DeleteItemView(LoginRequiredMixin, View):
         obj = Items.objects.get(id=id)
         obj.delete()
         return redirect('/items')
+
+class ListCategoriesView(View):
+    template_name = 'list_categories.html'
+
+    def get(self, request):
+        obj = Categories.objects.all()
+        return render(request, self.template_name, {
+            'obj': obj
+        })
+
+
+
+class AddCategoriesView(View):
+    template_name = 'add_categories.html'
+
+    def get(self, request):
+        form = AddCategoriesForm(request.POST)
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = AddCategoriesForm(request.POST)
+        if form.is_valid():
+            obj = Categories()
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/categories')
+        return HttpResponse(form.errors)
