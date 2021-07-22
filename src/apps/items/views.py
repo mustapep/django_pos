@@ -128,6 +128,29 @@ class AddCategoriesView(View):
             return redirect('/items/categories')
         return HttpResponse(form.errors)
 
+class EditCategoriesView(View):
+    template_name = 'edit_categories.html'
+
+    def get(self, request, id):
+        obj = Categories.objects.get(id=id)
+        data = {
+            'name': obj.name
+        }
+        form = AddCategoriesForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        form = AddCategoriesForm(request.POST)
+        if form.is_valid():
+            obj = Categories.objects.get(id=id)
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/items/categories')
+        return HttpResponse(form.errors)
+
 
 class DeleteCategoriesView(View):
     def get(self, request, id):

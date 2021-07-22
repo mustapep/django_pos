@@ -13,4 +13,5 @@ urlpatterns = [
     path('categories', ListCategoriesView.as_view()),
     path('categories/add', AddCategoriesView.as_view()),
     path('categories/<int:id>/delete', DeleteCategoriesView.as_view()),
+    path('categories/<int:id>/edit', EditCategoriesView.as_view()),
 ]
