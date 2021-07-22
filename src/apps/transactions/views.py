@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transactions, DetailTransaction, PaymentMethods
-from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMixin
-from .forms import SalesCreateOrderForm, SearchForm, TransactionForm, PaymentForm, CustomerPurchaseForm
-from datetime import datetime
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import SalesCreateOrderForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from mypermissionmixin.custommixin import ValidatePermissionMixin
+from .helper import income
+import calendar
 
 
 class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
@@ -42,7 +44,6 @@ class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request, id):
         form = SalesCreateOrderForm(request.POST)
         fp = CustomerPurchaseForm(request.POST)
-        search = SearchForm(request.POST)
         trn = Transactions.objects.get(id=id)
         dt = DetailTransaction.objects.filter(transaction=trn)
         print(dt)
@@ -55,7 +56,6 @@ class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         return render(request, self.template_name, {
             'dt': dt,
             'form': form,
-            'srch': search,
             'total': total,
             'obj': trn,
             't_i': sum(total_item),
@@ -251,3 +251,128 @@ class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
             trn.save()
             return redirect('/transactions')
         return HttpResponse(request, form.errors)
+
+
+
+class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = 'admin/transactions_report.html'
+    permission_required = ''
+    login_url = '/login'
+    data = []
+    min_income = None
+    max_income = None
+    year = ''
+    transactions = None
+    month_label = []
+
+    def get(self, request):
+        print('----- Get -----')
+        print(request.GET.get('seach_year'))
+        print(request.GET.get('seach_month'))
+        self.data, self.month_label = [], []
+        try:
+            sy = request.GET['seach_year']
+            obj = Transactions.objects.filter(create_at__year=sy)
+        except:
+            sy = Transactions.objects.order_by('create_at')[0]
+            sy = sy.create_at.strftime("%Y")
+            obj = Transactions.objects.all().order_by('create_at')
+        print('Tampilkan grafik berdasarkan transaksi pertamakali')
+        print('Tampilkan data table berdasarkan transaksi pertamakali')
+        self.year = sy
+        self.transactions = obj
+        page = request.GET.get('page', 1)
+        print('isi page :', page)
+        paginator = Paginator(obj, 5)
+        print('paginator :', paginator)
+        try:
+            trn = paginator.page(page)
+        except PageNotAnInteger:
+            trn = paginator.page(1)
+        except EmptyPage:
+            trn = paginator.page(paginator.num_pages)
+
+        print(f'start_index {trn.start_index()} ; end_index : {trn.end_index()}')
+        self.transactions = self.transactions[trn.start_index()-1:trn.end_index() + 1]
+        for x in range(1, 13):
+            print(calendar.month_name[x], DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x))
+            record = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x)
+            print(record)
+            total_income = income(record)
+            self.month_label.append(calendar.month_name[x])
+            self.data.append(total_income)
+        print(self.month_label)
+        print(self.data)
+
+        print('Kesini')
+        return render(request, self.template_name, {
+            'data': self.data,
+            'min_income': self.min_income,
+            'max_income': self.max_income,
+            'year': self.year,
+            'month_label': self.month_label,
+            'transactions': self.transactions,
+            'users': trn,
+            'start_index': trn.start_index(),
+            'end_index': trn.end_index(),
+        })
+
+    # def post(self, request):
+    #     print('tampilkan data grafik berdasarkan tahun')
+    #     print('data table berdasarkan tahun saja')
+    #     sy = request.POST['seach_year']
+    #     self.transactions = Transactions.objects.filter(create_at__year=sy).order_by('create_at')
+    #     page = request.POST.get('page', 1)
+    #     paginator = Paginator(self.transactions, 5)
+    #     try:
+    #         trn = paginator.page(page)
+    #     except PageNotAnInteger:
+    #         trn = paginator.page(1)
+    #     except EmptyPage:
+    #         trn = paginator.page(paginator.num_pages)
+    #     self.year = sy
+    #     self.transactions = self.transactions[trn.start_index()-1:trn.end_index()+1]
+    #     for x in range(1, 13):
+    #         record = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x)
+    #         total_income = income(record)
+    #         self.month_label.append(calendar.month_name[x])
+    #         self.data.append(total_income)
+    #     print(self.month_label)
+    #     print(self.data)
+    #     return redirect('/transactions/report/annual')
+
+
+class MonthlyReportView(TransactionsReportView):
+    template_name = 'admin/monthly_report.html'
+
+    def get(self, request):
+        self.data, self.month_label = [], []
+        try:
+            sy, sm = request.GET['seach_year'], request.GET['seach_month']
+        except:
+            pass
+        if (request.GET.get('seach_year') != None and request.GET.get('seach_year') != '') and (request.GET.get('seach_month')!= None and request.GET.get('seach_month') != ''):
+            print('Tampilkan grafik rata2 pendapatan perbulan berdasarkan tahun')
+            print('Tampilkan data transaksi berdasarkan tahun dan bulan')
+            self.transactions = Transactions.objects.filter(create_at__year=sy).filter(create_at__month=sm).order_by('create_at')
+            self.year = sm
+            for i in range(1, calendar.monthrange(int(sy), int(sm))[1]+1):
+                dt = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=sm).filter(transaction__create_at__day=str(i))
+                self.data.append(income(dt))
+                self.month_label.append('tgl '+str(i))
+        return render(request, self.template_name, {
+            'data': self.data,
+            'min_income': self.min_income,
+            'max_income': self.max_income,
+            'year': self.year,
+            'month_label': self.month_label,
+            'transactions': self.transactions,
+        })
+
+
+
+class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = ''
+
+    def get(self, request):
+        pass

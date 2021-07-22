@@ -32,7 +32,7 @@ class Members(models.Model):
 class Sales(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
     address = models.CharField(max_length=100)
-    nik_numb = models.IntegerField()
+    nik_numb = models.CharField(max_length=12)
     ktp_image = models.ImageField(upload_to='ktp/')
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)

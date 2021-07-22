@@ -1,0 +1,198 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+  <!-- <h1>{{transactions}}</h1> -->
+  <div class="row" style="padding-top: 25px;">
+    <div class="col-12">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card card-info">
+        <div class="card-header">
+          <h3 class="card-title"></h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <form action="/transactions/report/annual" method="GET">
+            {% csrf_token %}
+            <div class="row">    
+              <div class="col">
+                <div class="form-group">
+                  <label for="">Year</label>
+                    <div class="input-group date" id="seach_year" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#seach_year"  name="seach_year">
+                        <div class="input-group-append" data-target="#seach_year" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for=""></label>
+                  <div class="input-goup date" style="margin-top: 7px;">
+                    <button type="submit" class="btn btn-success" style=" height: 37px;">
+                      Search
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              
+            </div>
+          </form>
+          <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+            <canvas id="lineChart"  class="chartjs-render-monitor"></canvas>
+          </div>
+        </div>
+        <!-- /.card-body -->
+      </div>
+        <div class="card">
+            <div class="card-header" style="background-color: rgb(252, 252, 252);">
+              <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+    
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <div class="row">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Transaction Date</th>
+                      <th>Sales</th>
+                      <th>Customer</th>
+                      <th>Payment Method</th>
+                      <th>Order at</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                          <td>{{t.member}}</td>
+                          <td>{{t.sales}}</td>
+                          <td>{{t.payment_method}}</td>
+                          <td>{{t.paid_of}}</td>
+                          <td>{{t.create_at}}</td>
+                          <td>{{t.customer_purchase}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 col-md-5">
+                  <div class="dataTables_info" id="example2_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                  <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                    <!-- <ul class="pagination">
+                      <li class="paginate_button page-item previous disabled" id="example2_previous">
+                        <a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                      </li>
+                      <li class="paginate_button page-item active">
+                        <a href="#" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">1</a>
+                      </li>
+                      <li class="paginate_button page-item ">
+                        <a href="#" aria-controls="example2" data-dt-idx="2" tabindex="0" class="page-link">2</a>
+                      </li>
+                      <li class="paginate_button page-item next" id="example2_next">
+                        <a href="#" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                      </li>
+                    </ul> -->
+                    {% if users.has_other_pages %}
+                    <ul class="pagination">
+                      {% if users.has_previous %}
+                        <li class="paginate_button page-item ">
+                          <a href="?page={{ users.previous_page_number }}">«</a>
+                        </li>
+                      {% else %}
+                        <li class="disabled"><span>«</span></li>
+                      {% endif %}
+                      {% for i in users.paginator.page_range %}
+                        {% if users.number == i %}
+                          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                          <li><a href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                      {% if users.has_next %}
+                        <li><a href="?page={{ users.next_page_number }}">»</a></li>
+                      {% else %}
+                        <li class="disabled"><span>»</span></li>
+                      {% endif %}
+                    </ul>
+                  {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $('#seach_year').datetimepicker({
+        format: 'YYYY'
+    });
+  var ctx = document.getElementById('lineChart');
+  var lineChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: [{% for l in month_label %}'{{l}}',{% endfor %}],
+          datasets: [{
+              label: [{{year}}],  
+              data: {{data}},
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 3
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  });
+  </script>
+</script>
+  
+{% endblock script %}

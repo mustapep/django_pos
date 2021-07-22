@@ -41,7 +41,7 @@
                         <td>{{t.sales}}</td>
                         <td>{{t.payment_method}}</td>
                         <td>{{t.customer_purchase}}</td>
-                        <td>{{t.update_at}}</td>
+                        <td>{{t.create_at}}</td>
                         <td>
                             <a href="/transactions/{{t.id}}/detail_transaction" class="btn btn-secondary">
                                 <i class="fas fa-shopping-cart"></i>
@@ -49,6 +49,9 @@
                             <a href="/transactions/{{t.id}}/edit" class="btn btn-info">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            <a href="/transactions/{{t.id}}/add_testing" class="btn btn-success">
+                              <i class="fas fa-edit"></i>
+                          </a>
                             <a href="/transactions/{{t.id}}/delete" class="btn btn-danger">
                                 <i class="far fa-trash-alt"></i>
                             </a>

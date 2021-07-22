@@ -19,14 +19,6 @@ class SalesCreateOrderForm(forms.Form):
         }
     ))
 
-class SearchForm(forms.Form):
-    search = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'class': 'form-control',
-            'type': 'search',
-            'placeholder': 'search'
-        }
-    ))
 
 
 class TransactionForm(forms.Form):
@@ -68,6 +60,3 @@ class CustomerPurchaseForm(forms.Form):
             'placeholder': 'paying off'
         }
     ))
-
-
-

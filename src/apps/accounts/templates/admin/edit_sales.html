@@ -1,0 +1,52 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+  <div class="container">
+      <div class="row">
+          <div class="col">
+              <form action="/accounts/sales/{{id}}/update" method="POST" enctype="multipart/form-data">
+                  <h2>Edit Sales</h2>
+                  {% csrf_token %}
+                  <div class="row">
+                      <div class="col">
+                          <div class="form-group">
+                              <label for="">{{form.username.label}}</label>
+                              {{form.username}}
+                          </div>
+                          <div class="form-group">
+                              <label for="">{{form.password.label}}</label>
+                              {{form.password}}
+                          </div>
+                          <div class="form-group">
+                              <label for="">{{form.first_name.label}}</label>
+                              {{form.first_name}}
+                          </div>
+                          <div class="form-group">
+                            <label for="">{{form.last_name.label}}</label>
+                            {{form.last_name}}
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                            <label for="">{{form.address.label}}</label>
+                            {{form.address}}
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{form.nik_numb.label}}</label>
+                            {{form.nik_numb}}
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{form.ktp_image.label}}</label>
+                            <br>
+                            {{form.ktp_image}}
+                        </div>
+                        <div class="form-group" style="margin-left: 65%; margin-top: 34px;">
+                            <a href="/accounts/sales" class="btn btn-warning">Cancel</a>
+                            <button class="btn btn-info" type="submit">Submit</button>
+                        </div>
+                      </div>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+{% endblock content %}

@@ -39,5 +39,15 @@ class UpdateItemForm(forms.Form):
     item_img = forms.ImageField(required=False)
 
 
+class AddCategoriesForm(forms.Form):
+    name = forms.CharField(label='Name', widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+class UnitForm(forms.Form):
+    name = forms.CharField(label='Unit', widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
 
 

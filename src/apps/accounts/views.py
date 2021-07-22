@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm
+from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm, SalesEditForm
 from django.http import HttpResponse
 from .models import User, Members, Sales
 from django.contrib import messages
@@ -259,6 +259,49 @@ class AddSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
                 return redirect('/accounts/sales')
             messages.error(request, "Password is wrong")
         return HttpResponse(form.errors)
+
+
+class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = 'admin/edit_sales.html'
+
+    def get(self, request, id):
+        obj = Sales.objects.get(id=id)
+        data = {
+            'username': obj.user.username,
+            'first_name': obj.user.first_name,
+            'last_name': obj.user.last_name,
+            'address': obj.address,
+            'nik_numb': obj.nik_numb,
+            'ktp_image': obj.ktp_image,
+        }
+        form = SalesEditForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        form = SalesEditForm(request.POST, request.FILES)
+        print(request.POST)
+        print(request.FILES)
+        if form.is_valid():
+            obj = Sales.objects.get(id=id)
+            obj.user.username = form.cleaned_data['username']
+            obj.user.first_name = form.cleaned_data['first_name']
+            obj.user.last_name = form.cleaned_data['last_name']
+            if form.cleaned_data['password'] != '':
+                obj.user.set_password(form.cleaned_data['password'])
+            obj.user.save()
+            try:
+                obj.ktp_image = request.FILES['ktp_image']
+            except:
+                pass
+            obj.address = form.cleaned_data['address']
+            obj.nik_numb = form.cleaned_data['nik_numb']
+            obj.save()
+            return redirect('/accounts/sales')
+        return HttpResponse(form.errors)
+
 
 
 class DeleteSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):

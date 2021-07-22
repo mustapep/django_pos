@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import Categories, Items
+from .models import *
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMixin
-from .forms import ItemForm, UpdateItemForm
+from .forms import *
 from django.http import HttpResponse
 from mypermissionmixin.custommixin import ValidatePermissionMixin
 
@@ -98,3 +98,121 @@ class DeleteItemView(LoginRequiredMixin, View):
         obj = Items.objects.get(id=id)
         obj.delete()
         return redirect('/items')
+
+class ListCategoriesView(View):
+    template_name = 'list_categories.html'
+
+    def get(self, request):
+        obj = Categories.objects.all()
+        return render(request, self.template_name, {
+            'obj': obj
+        })
+
+
+
+class AddCategoriesView(View):
+    template_name = 'add_categories.html'
+
+    def get(self, request):
+        form = AddCategoriesForm(request.POST)
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = AddCategoriesForm(request.POST)
+        if form.is_valid():
+            obj = Categories()
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/items/categories')
+        return HttpResponse(form.errors)
+
+class EditCategoriesView(View):
+    template_name = 'edit_categories.html'
+
+    def get(self, request, id):
+        obj = Categories.objects.get(id=id)
+        data = {
+            'name': obj.name
+        }
+        form = AddCategoriesForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        form = AddCategoriesForm(request.POST)
+        if form.is_valid():
+            obj = Categories.objects.get(id=id)
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/items/categories')
+        return HttpResponse(form.errors)
+
+
+class DeleteCategoriesView(View):
+    def get(self, request, id):
+        obj = Categories.objects.get(id=id)
+        obj.delete()
+        return redirect('/items/categories')
+
+
+class ListUnitView(View):
+    template_name = 'list_unit.html'
+
+    def get(self, request):
+        obj = Unit.objects.all()
+        return render(request, self.template_name,{
+            'obj': obj
+        })
+
+class AddUnitView(View):
+    template_name = 'add_unit.html'
+
+    def get(self, request):
+        form = UnitForm(request.POST)
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = UnitForm(request.POST)
+        if form.is_valid():
+            obj = Unit()
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/items/unit')
+        return HttpResponse(form.errors)
+
+
+class EditUNitView(View):
+    template_name = 'edit_unit.html'
+
+    def get(self, request, id):
+        obj = Unit.objects.get(id=id)
+        data = {
+            'name': obj.name
+        }
+        form = UnitForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        form = UnitForm(request.POST)
+        if form.is_valid():
+            obj = Unit.objects.get(id=id)
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/items/unit')
+        return HttpResponse(form.errors)
+
+
+class DeleteUnitView(View):
+    def get(self, request, id):
+        obj = Unit.objects.get(id=id)
+        obj.delete()
+        return redirect('/items/unit')
