@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Categories, Items
+from .models import *
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMixin
 from .forms import *
@@ -157,3 +157,62 @@ class DeleteCategoriesView(View):
         obj = Categories.objects.get(id=id)
         obj.delete()
         return redirect('/items/categories')
+
+
+class ListUnitView(View):
+    template_name = 'list_unit.html'
+
+    def get(self, request):
+        obj = Unit.objects.all()
+        return render(request, self.template_name,{
+            'obj': obj
+        })
+
+class AddUnitView(View):
+    template_name = 'add_unit.html'
+
+    def get(self, request):
+        form = UnitForm(request.POST)
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+    def post(self, request):
+        form = UnitForm(request.POST)
+        if form.is_valid():
+            obj = Unit()
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/items/unit')
+        return HttpResponse(form.errors)
+
+
+class EditUNitView(View):
+    template_name = 'edit_unit.html'
+
+    def get(self, request, id):
+        obj = Unit.objects.get(id=id)
+        data = {
+            'name': obj.name
+        }
+        form = UnitForm(initial=data)
+        return render(request, self.template_name, {
+            'form': form,
+            'id': id
+        })
+
+    def post(self, request, id):
+        form = UnitForm(request.POST)
+        if form.is_valid():
+            obj = Unit.objects.get(id=id)
+            obj.name = form.cleaned_data['name']
+            obj.save()
+            return redirect('/items/unit')
+        return HttpResponse(form.errors)
+
+
+class DeleteUnitView(View):
+    def get(self, request, id):
+        obj = Unit.objects.get(id=id)
+        obj.delete()
+        return redirect('/items/unit')

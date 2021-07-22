@@ -14,4 +14,10 @@ urlpatterns = [
     path('categories/add', AddCategoriesView.as_view()),
     path('categories/<int:id>/delete', DeleteCategoriesView.as_view()),
     path('categories/<int:id>/edit', EditCategoriesView.as_view()),
+    path('unit', ListUnitView.as_view()),
+    path('unit/add', AddUnitView.as_view()),
+    path('unit/add', AddUnitView.as_view()),
+    path('unit/<int:id>/edit', EditUNitView.as_view()),
+    path('unit/<int:id>/edit', EditUNitView.as_view()),
+    path('unit/<int:id>/delete', DeleteUnitView.as_view()),
 ]

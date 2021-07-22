@@ -44,5 +44,10 @@ class AddCategoriesForm(forms.Form):
         'class': 'form-control'
     }))
 
+class UnitForm(forms.Form):
+    name = forms.CharField(label='Unit', widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
 
 

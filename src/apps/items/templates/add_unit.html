@@ -1,0 +1,34 @@
+{% extends "base/dasboard.html" %}
+{% block content %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
+        <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title" style="text-align: center;">Add Unit</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form action="/items/unit/add" method="POST">
+                {% csrf_token %}
+              <div class="card-body">
+                <div class="form-group">
+                    <label for="">
+                        {{form.name.label}}
+                    </label>
+                    {{form.name}}
+                </div>
+                <div class="form-group" style="margin-left: 45%;">
+                    <a href="/items/unit" class="btn btn-warning">Cancel</a>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+              </div>
+              <!-- /.card-body -->
+
+            </form>
+          </div>
+    </div>
+    <div class="col"></div>
+</div>
+  
+{% endblock content %}
