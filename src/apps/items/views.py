@@ -127,3 +127,10 @@ class AddCategoriesView(View):
             obj.save()
             return redirect('/items/categories')
         return HttpResponse(form.errors)
+
+
+class DeleteCategoriesView(View):
+    def get(self, request, id):
+        obj = Categories.objects.get(id=id)
+        obj.delete()
+        return redirect('/items/categories')
