@@ -125,5 +125,5 @@ class AddCategoriesView(View):
             obj = Categories()
             obj.name = form.cleaned_data['name']
             obj.save()
-            return redirect('/categories')
+            return redirect('/items/categories')
         return HttpResponse(form.errors)
