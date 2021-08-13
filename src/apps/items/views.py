@@ -65,6 +65,7 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'id': item.id,
             'category': item.categories,
             'name': item.name,
+            'unit': item.unit,
             'price': item.price,
             'description': item.description,
             'item_img': item.item_img
@@ -83,6 +84,7 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
             print('isi categories', form.cleaned_data['category'])
             obj.name = form.cleaned_data['name']
             obj.price = form.cleaned_data['price']
+            obj.unit = form.cleaned_data['unit']
             obj.description = form.cleaned_data['description']
             try:
                 obj.item_img = request.FILES['item_img']
