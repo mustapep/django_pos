@@ -1,6 +1,5 @@
 {% extends "base/dasboard.html" %}
 {% block content %}
-<h1>Querynya blm di pikir</h1>
   <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
@@ -117,15 +116,10 @@
       data: {
           labels: [{% for l in month_label %}'{{l}}',{% endfor %}],
           datasets: [{
-              label: [{{year}}],  
+              label: '{{mn}}',  
               data: {{data}},
               backgroundColor: [
                   {% for l in month_label %}'rgba(54, 162, 235, 0.2)',{% endfor %}
-                  // 'rgba(54, 162, 235, 0.2)',
-                  // 'rgba(255, 206, 86, 0.2)',
-                  // 'rgba(75, 192, 192, 0.2)',
-                  // 'rgba(153, 102, 255, 0.2)',
-                  // 'rgba(255, 159, 64, 0.2)'
               ],
               borderColor: [
 

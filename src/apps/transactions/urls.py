@@ -25,6 +25,7 @@ urlpatterns = [
     path('payment/<int:id>/delete', DeletePaymentView.as_view()),
     
 
-    path('report/annual', TransactionsReportView.as_view()),
+    path('report/year', TransactionsReportView.as_view()),
     path('report/monthly', MonthlyReportView.as_view()),
+    path('report/today', TodayReportView.as_view()),
 ]

@@ -28,23 +28,23 @@
             <div class="card-body table-responsive p-0">
               <table class="table table-bordered">
                 <thead>
-                  <tr>
-                    <th>Customer</th>
-                    <th>Sales</th>
-                    <th>Payment Method</th>
-                    <th>Paid Of</th>
-                    <th>Create at</th>
-                    <th></th>
+                  <tr role="row" >
+                    <th class="sorting sorting_asc" style="text-align: center;">Date</th>
+                    <th class="sorting sorting_asc" style="text-align: center;">Employee</th>
+                    <th class="sorting sorting_asc" style="text-align: center;">Payment Method</th>
+                    <th class="sorting sorting_asc" style="text-align: center;">total</th>
+                    <th class="sorting sorting_asc" style="text-align: center;">Create at</th>
+                    <th class="sorting sorting_asc" style="text-align: center;"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for t in t_all %}
                   <tr>
-                        <td>{{t.member}}</td>
-                        <td>{{t.sales}}</td>
-                        <td>{{t.payment_method}}</td>
-                        <td>{{t.paid_of}}</td>
-                        <td>{{t.create_at}}</td>
+                        <td style="text-align: center;">{{t.create_at}}</td>
+                        <td style="text-align: center;">{{t.sales}}</td>
+                        <td style="text-align: center;">{{t.payment_method}}</td>
+                        <td style="text-align: center;">{{t.paid_of}}</td>
+                        <td style="text-align: center;">{{t.create_at}}</td>
                         <td>
                             <a href="/transactions/{{t.id}}/detail_transaction" class="btn btn-secondary">
                                 <i class="fas fa-shopping-cart"></i>
