@@ -269,39 +269,13 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     month_label = []
 
     def get(self, request):
-        print('----- Get -----')
-        print(request.GET.get('seach_year'))
-        print(request.GET.get('seach_month'))
         self.data, self.month_label = [], []
-        try:
-            sy = request.GET['seach_year']
-            obj = Transactions.objects.filter(create_at__year=sy)
-        except:
-            sy = Transactions.objects.order_by('create_at')[0]
-            sy = sy.create_at.strftime("%Y")
-            obj = Transactions.objects.all().order_by('create_at')
-        print('Tampilkan grafik berdasarkan transaksi pertamakali')
-        print('Tampilkan data table berdasarkan transaksi pertamakali')
+        today = datetime.datetime.now()
+        sy = today.strftime("%Y")
         self.year = sy
-        print("year", self.year)
-        self.transactions = obj
-        page = request.GET.get('page', 1)
-        print('isi page :', page)
-        paginator = Paginator(obj, 5)
-        print('paginator :', paginator)
-        try:
-            trn = paginator.page(page)
-        except PageNotAnInteger:
-            trn = paginator.page(1)
-        except EmptyPage:
-            trn = paginator.page(paginator.num_pages)
-
-        print(f'start_index {trn.start_index()} ; end_index : {trn.end_index()}')
-        self.transactions = self.transactions[trn.start_index()-1:trn.end_index() + 1]
         for x in range(1, 13):
             print(calendar.month_name[x], DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x))
             record = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x)
-            print(record)
             total_income = income(record)
             self.month_label.append(calendar.month_name[x])
             self.data.append(total_income)
@@ -319,15 +293,9 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         print('Kesini')
         return render(request, self.template_name, {
             'data': self.data,
-            'min_income': self.min_income,
-            'max_income': self.max_income,
             'year': self.year,
             'month_label': self.month_label,
-            'transactions': self.transactions,
-            'users': trn,
-            'start_index': trn.start_index(),
-            'end_index': trn.end_index(),
-            'trn_wdgt': Transactions.objects.all().count(),
+            'trn_wdgt': Transactions.objects.filter(paid_of=True).count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
         })
@@ -344,7 +312,7 @@ class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         today = datetime.datetime.now()
         y = today.strftime("%Y")
         d = calendar.monthrange(int(y),int(today.strftime("%m")))[1]
-        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=today.strftime("%m"))
+        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=today.strftime("%m")).filter(paid_of=True)
         print("total transaction :",trans.count())
         data, month_label = [], []
         for i in range(d+1):
@@ -388,7 +356,7 @@ class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         today = datetime.datetime.now()
         y, m, d  = today.strftime('%Y'),today.strftime('%m'),today.strftime('%d')
         data , month_label, items= [],[], []
-        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d)
+        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d).filter(paid_of=True)
         sh, eh=0,1
         for i in range(12):
             month_label.append(f"{sh}-{eh}")
