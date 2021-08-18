@@ -8,7 +8,7 @@ from .forms import SalesCreateOrderForm, TransactionForm, PaymentForm, CustomerP
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from mypermissionmixin.custommixin import ValidatePermissionMixin
-from .helper import income
+from .helper import income, dateRange
 import calendar
 
 
@@ -295,7 +295,7 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'data': self.data,
             'year': self.year,
             'month_label': self.month_label,
-            'trn_wdgt': Transactions.objects.filter(paid_of=True).count(),
+            'trn_wdgt': Transactions.objects.filter(create_at__year=sy).filter(paid_of=True).count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
         })
@@ -334,7 +334,7 @@ class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
         "'Avarage Items per Sales'"
         dt = DetailTransaction.objects.filter(transaction__create_at__year=y)
-        tr = Transactions.objects.filter(create_at__year=y)
+        tr = Transactions.objects.filter(create_at__year=y).filter(paid_of=True)
         avis = dt.count()/tr.count()
         return render(request, self.template_name, {
             'data': data,
@@ -369,8 +369,8 @@ class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
                     sub_totals.append(d.sub_total)
             for e in teh:
                 d_eh = DetailTransaction.objects.filter(transaction__id=e.id)
-                items.append(d_eh.count())
                 for d in d_eh:
+                    items.append(d.quantity)
                     sub_totals.append(d.sub_total)
             data.append(sum(sub_totals))
             sh+=2
@@ -396,7 +396,48 @@ class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'avis': round(avis, 2),
         })
 class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
-    template_name = ''
+    template_name = 'admin/report_by_daterange.html'
 
     def get(self, request):
-        pass
+        data, labels, items = [], [], []
+        try:
+            tgl = request.GET['date_range']
+            start = tgl[0:10]
+            end = tgl[13:]
+            start = datetime.datetime.strptime(start, '%d/%m/%Y')
+            end = datetime.datetime.strptime(end, '%d/%m/%Y')
+            for n in dateRange(start, end):
+                labels.append(n.strftime("%Y-%m-%d")) #label
+                y, m ,d = n.strftime("%Y"), n.strftime("%m"), n.strftime("%d")
+                trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d)
+                print(f'Transaksi pada {n.strftime("%Y-%m-%d")} : {trans.count()}')
+                trans_total=[]
+                for t in trans:
+                    dt_total = []
+                    dt = DetailTransaction.objects.filter(transaction__id=t.id)
+                    for d in dt:
+                        items.append(d.quantity)
+                        dt_total.append(d.sub_total)
+                    trans_total.append(sum(dt_total))
+                data.append(sum(trans_total))
+            print(f"panjang data : {len(data)}, panjang label {len(labels)}")
+            print(data)
+            print(labels)
+            trn_wgt = Transactions.objects.filter(create_at__date__range=[start.strftime("%Y-%m-%d"),end.strftime("%Y-%m-%d")]).count()
+            avgs = sum(data)/trn_wgt
+            avis = sum(items)/trn_wgt
+        except:
+             trn_wgt, avgs, avis, tgl =0, 0 , 0, None
+        try:
+            pass
+        except:
+           pass
+        return render(request, self.template_name, {
+            'data':data,
+            'labels':labels,
+            'trn_wdgt': trn_wgt,
+            "avgs":avgs,
+            'avis':avis,
+            'label': tgl
+
+        })

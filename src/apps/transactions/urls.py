@@ -28,4 +28,5 @@ urlpatterns = [
     path('report/year', TransactionsReportView.as_view()),
     path('report/monthly', MonthlyReportView.as_view()),
     path('report/today', TodayReportView.as_view()),
+    path('report/date_range', DateRangeReportView.as_view()),
 ]
