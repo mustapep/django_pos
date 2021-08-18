@@ -89,19 +89,21 @@ class LoginProcess(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             usr = authenticate(username=username, password=password)
-            if usr.is_authenticated:
-                if Group.objects.get(name='sales') in usr.groups.all():
-                    login(request, usr)
-                    return redirect('/transactions')
-                elif Group.objects.get(name='admin') in usr.groups.all():
-                    login(request, usr)
-                    return redirect('/items')
-                else:
-                    login(request, usr)
-                    return redirect('/customer_landingpage')
-            else:
-                messages.error(request, "Username is not found")
+            try:
+                if usr.is_authenticated:
+                    if Group.objects.get(name='sales') in usr.groups.all():
+                        login(request, usr)
+                        return redirect('/transactions')
+                    elif Group.objects.get(name='admin') in usr.groups.all():
+                        login(request, usr)
+                        return redirect('/items')
+                    else:
+                        login(request, usr)
+                        return redirect('/customer_landingpage')
+            except:
+                messages.error(request, "Username or password is wrong!")
                 return redirect('/login')
+
         else:
             return HttpResponse(form.errors)
 

@@ -1,10 +1,15 @@
 from django import forms
-from .models import Categories
+from .models import Categories, Unit
 
 
 class ItemForm(forms.Form):
     id = forms.CharField(required=False, widget=forms.HiddenInput())
     category = forms.ModelChoiceField(queryset=Categories.objects.all(), label="Category", widget=forms.Select(
+        attrs={
+            'class': 'form-control'
+        }
+    ))
+    unit = forms.ModelChoiceField(queryset=Unit.objects.all(), label='Unit', widget=forms.Select(
         attrs={
             'class': 'form-control'
         }
@@ -33,6 +38,11 @@ class UpdateItemForm(forms.Form):
     price = forms.CharField(label='Price', widget=forms.TextInput(attrs={
         'class': 'form-control'
     }))
+    unit = forms.ModelChoiceField(queryset=Unit.objects.all(), label='Unit', widget=forms.Select(
+        attrs={
+            'class': 'form-control'
+        }
+    ))
     description = forms.CharField(label='Description', widget=forms.Textarea(attrs={
         'class': 'form-control'
     }))

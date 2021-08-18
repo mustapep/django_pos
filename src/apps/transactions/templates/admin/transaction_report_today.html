@@ -59,23 +59,23 @@
       </div>
     </div>
     <div class="row">
-      <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link " aria-current="page" href="/transactions/report/today">Today</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link  " href="/transactions/report/monthly">Month</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/transactions/report/year">Year</a>
-        </li>
-      </ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/transactions/report/today">Today</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="/transactions/report/monthly">Month</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/transactions/report/year">Year</a>
+            </li>
+          </ul>
     </div>
     <div class="row">
         <div class="col-md-8">
             <div class="card card-info" >
-                <div class="card-header"  style="background-color: #6610f2 !important;">
-                  <h3 class="card-title">Total Sales in this Month</h3>
+                <div class="card-header"  style="background-color: #10c1f2 !important;">
+                  <h3 class="card-title">Sales Report</h3>
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                       <i class="fas fa-minus"></i>
@@ -116,7 +116,7 @@
       data: {
           labels: [{% for l in month_label %}'{{l}}',{% endfor %}],
           datasets: [{
-              label: [{{year}}],  
+              label: '{{now}}',  
               data: {{data}},
               backgroundColor: [
                   {% for l in month_label %}'rgba(54, 162, 235, 0.2)',{% endfor %}

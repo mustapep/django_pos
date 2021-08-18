@@ -65,6 +65,7 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'id': item.id,
             'category': item.categories,
             'name': item.name,
+            'unit': item.unit,
             'price': item.price,
             'description': item.description,
             'item_img': item.item_img
@@ -83,6 +84,7 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
             print('isi categories', form.cleaned_data['category'])
             obj.name = form.cleaned_data['name']
             obj.price = form.cleaned_data['price']
+            obj.unit = form.cleaned_data['unit']
             obj.description = form.cleaned_data['description']
             try:
                 obj.item_img = request.FILES['item_img']
@@ -93,14 +95,18 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
         return HttpResponse(form.errors)
 
 
-class DeleteItemView(LoginRequiredMixin, View):
+class DeleteItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    login_url = '/login'
+    permission_required = 'items.deleteitems'
     def get(self, request, id):
         obj = Items.objects.get(id=id)
         obj.delete()
         return redirect('/items')
 
-class ListCategoriesView(View):
+class ListCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'list_categories.html'
+    login_url = '/login'
+    permission_required = 'items.view_categories'
 
     def get(self, request):
         obj = Categories.objects.all()
@@ -110,8 +116,10 @@ class ListCategoriesView(View):
 
 
 
-class AddCategoriesView(View):
+class AddCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'add_categories.html'
+    login_url = '/login'
+    permission_required = 'items.add_categories'
 
     def get(self, request):
         form = AddCategoriesForm(request.POST)
@@ -128,8 +136,10 @@ class AddCategoriesView(View):
             return redirect('/items/categories')
         return HttpResponse(form.errors)
 
-class EditCategoriesView(View):
+class EditCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'edit_categories.html'
+    login_url = '/login'
+    permission_required = 'items.edit_categories'
 
     def get(self, request, id):
         obj = Categories.objects.get(id=id)
@@ -152,15 +162,19 @@ class EditCategoriesView(View):
         return HttpResponse(form.errors)
 
 
-class DeleteCategoriesView(View):
+class DeleteCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    login_url = '/login'
+    permission_required = 'items.delete_categories'
     def get(self, request, id):
         obj = Categories.objects.get(id=id)
         obj.delete()
         return redirect('/items/categories')
 
 
-class ListUnitView(View):
+class ListUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'list_unit.html'
+    login_url = '/login'
+    permission_required = 'items.view_unit'
 
     def get(self, request):
         obj = Unit.objects.all()
@@ -168,8 +182,10 @@ class ListUnitView(View):
             'obj': obj
         })
 
-class AddUnitView(View):
+class AddUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'add_unit.html'
+    login_url = '/login'
+    permission_required = 'items.add_unit'
 
     def get(self, request):
         form = UnitForm(request.POST)
@@ -187,7 +203,9 @@ class AddUnitView(View):
         return HttpResponse(form.errors)
 
 
-class EditUNitView(View):
+class EditUNitView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    login_url = '/login'
+    permission_required = 'items.edit_unit'
     template_name = 'edit_unit.html'
 
     def get(self, request, id):
@@ -211,7 +229,9 @@ class EditUNitView(View):
         return HttpResponse(form.errors)
 
 
-class DeleteUnitView(View):
+class DeleteUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    login_url = '/login'
+    permission_required = 'items.delete_unit'
     def get(self, request, id):
         obj = Unit.objects.get(id=id)
         obj.delete()

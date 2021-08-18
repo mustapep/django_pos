@@ -59,17 +59,17 @@
       </div>
     </div>
     <div class="row">
-      <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link " aria-current="page" href="/transactions/report/today">Today</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link  " href="/transactions/report/monthly">Month</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/transactions/report/year">Year</a>
-        </li>
-      </ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" href="/transactions/report/today">Today</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active " href="/transactions/report/monthly">Month</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/transactions/report/year">Year</a>
+            </li>
+          </ul>
     </div>
     <div class="row">
         <div class="col-md-8">
@@ -116,15 +116,10 @@
       data: {
           labels: [{% for l in month_label %}'{{l}}',{% endfor %}],
           datasets: [{
-              label: [{{year}}],  
+              label: '{{mn}}',  
               data: {{data}},
               backgroundColor: [
                   {% for l in month_label %}'rgba(54, 162, 235, 0.2)',{% endfor %}
-                  // 'rgba(54, 162, 235, 0.2)',
-                  // 'rgba(255, 206, 86, 0.2)',
-                  // 'rgba(75, 192, 192, 0.2)',
-                  // 'rgba(153, 102, 255, 0.2)',
-                  // 'rgba(255, 159, 64, 0.2)'
               ],
               borderColor: [
 

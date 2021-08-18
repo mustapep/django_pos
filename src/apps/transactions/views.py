@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transactions, DetailTransaction, PaymentMethods
@@ -6,7 +8,7 @@ from .forms import SalesCreateOrderForm, TransactionForm, PaymentForm, CustomerP
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from mypermissionmixin.custommixin import ValidatePermissionMixin
-from .helper import income
+from .helper import income, dateRange
 import calendar
 
 
@@ -185,6 +187,7 @@ class PaymentListView(LoginRequiredMixin, ValidatePermissionMixin, View):
 class AddPaymentView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/add_payment.html'
     login_url = '/login'
+    permission_denied_message = 'items.add_payment'
 
     def get(self, request):
         form = PaymentForm()
@@ -266,113 +269,175 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     month_label = []
 
     def get(self, request):
-        print('----- Get -----')
-        print(request.GET.get('seach_year'))
-        print(request.GET.get('seach_month'))
         self.data, self.month_label = [], []
-        try:
-            sy = request.GET['seach_year']
-            obj = Transactions.objects.filter(create_at__year=sy)
-        except:
-            sy = Transactions.objects.order_by('create_at')[0]
-            sy = sy.create_at.strftime("%Y")
-            obj = Transactions.objects.all().order_by('create_at')
-        print('Tampilkan grafik berdasarkan transaksi pertamakali')
-        print('Tampilkan data table berdasarkan transaksi pertamakali')
+        today = datetime.datetime.now()
+        sy = today.strftime("%Y")
         self.year = sy
-        self.transactions = obj
-        page = request.GET.get('page', 1)
-        print('isi page :', page)
-        paginator = Paginator(obj, 5)
-        print('paginator :', paginator)
-        try:
-            trn = paginator.page(page)
-        except PageNotAnInteger:
-            trn = paginator.page(1)
-        except EmptyPage:
-            trn = paginator.page(paginator.num_pages)
-
-        print(f'start_index {trn.start_index()} ; end_index : {trn.end_index()}')
-        self.transactions = self.transactions[trn.start_index()-1:trn.end_index() + 1]
         for x in range(1, 13):
             print(calendar.month_name[x], DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x))
             record = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x)
-            print(record)
             total_income = income(record)
             self.month_label.append(calendar.month_name[x])
             self.data.append(total_income)
         print(self.month_label)
         print(self.data)
+        "'Avarage Sales Value'"
+        sub_totals = []
+        for s in DetailTransaction.objects.all():
+            sub_totals.append(s.sub_total)
+        print("sub_total", sub_totals)
+        avgs = sum(sub_totals) / Transactions.objects.all().count()
 
+        "'Avarage Items per Sales'"
+        avis = DetailTransaction.objects.all().count()/ Transactions.objects.all().count()
         print('Kesini')
         return render(request, self.template_name, {
             'data': self.data,
-            'min_income': self.min_income,
-            'max_income': self.max_income,
             'year': self.year,
             'month_label': self.month_label,
-            'transactions': self.transactions,
-            'users': trn,
-            'start_index': trn.start_index(),
-            'end_index': trn.end_index(),
+            'trn_wdgt': Transactions.objects.filter(create_at__year=sy).filter(paid_of=True).count(),
+            'avgs': round(avgs, 2),
+            'avis': round(avis, 2),
         })
-
-    # def post(self, request):
-    #     print('tampilkan data grafik berdasarkan tahun')
-    #     print('data table berdasarkan tahun saja')
-    #     sy = request.POST['seach_year']
-    #     self.transactions = Transactions.objects.filter(create_at__year=sy).order_by('create_at')
-    #     page = request.POST.get('page', 1)
-    #     paginator = Paginator(self.transactions, 5)
-    #     try:
-    #         trn = paginator.page(page)
-    #     except PageNotAnInteger:
-    #         trn = paginator.page(1)
-    #     except EmptyPage:
-    #         trn = paginator.page(paginator.num_pages)
-    #     self.year = sy
-    #     self.transactions = self.transactions[trn.start_index()-1:trn.end_index()+1]
-    #     for x in range(1, 13):
-    #         record = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x)
-    #         total_income = income(record)
-    #         self.month_label.append(calendar.month_name[x])
-    #         self.data.append(total_income)
-    #     print(self.month_label)
-    #     print(self.data)
-    #     return redirect('/transactions/report/annual')
-
-
-class MonthlyReportView(TransactionsReportView):
-    template_name = 'admin/monthly_report.html'
+class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = 'admin/transaction_report_month.html'
+    permission_required = ''
+    login_url = '/login'
+    min_income = None
+    max_income = None
+    year = ''
+    transactions = None
 
     def get(self, request):
-        self.data, self.month_label = [], []
-        try:
-            sy, sm = request.GET['seach_year'], request.GET['seach_month']
-        except:
-            pass
-        if (request.GET.get('seach_year') != None and request.GET.get('seach_year') != '') and (request.GET.get('seach_month')!= None and request.GET.get('seach_month') != ''):
-            print('Tampilkan grafik rata2 pendapatan perbulan berdasarkan tahun')
-            print('Tampilkan data transaksi berdasarkan tahun dan bulan')
-            self.transactions = Transactions.objects.filter(create_at__year=sy).filter(create_at__month=sm).order_by('create_at')
-            self.year = sm
-            for i in range(1, calendar.monthrange(int(sy), int(sm))[1]+1):
-                dt = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=sm).filter(transaction__create_at__day=str(i))
-                self.data.append(income(dt))
-                self.month_label.append('tgl '+str(i))
+        today = datetime.datetime.now()
+        y = today.strftime("%Y")
+        d = calendar.monthrange(int(y),int(today.strftime("%m")))[1]
+        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=today.strftime("%m")).filter(paid_of=True)
+        print("total transaction :",trans.count())
+        data, month_label = [], []
+        for i in range(d+1):
+            month_label.append(str(i))
+            total_day = []
+            for t in trans:
+                sub_totals =[]
+                if t.create_at.strftime("%d") == str(i):
+                    dt = DetailTransaction.objects.filter(transaction__id=t.id)
+                    for d in dt:
+                        sub_totals.append(d.sub_total)
+                total_day.append(sum(sub_totals))
+            data.append(sum(total_day))
+        "'Avarage Sales Value'"
+        sub_totals = []
+        for s in DetailTransaction.objects.filter(transaction__create_at__year=y):
+            sub_totals.append(s.sub_total)
+        avgs = sum(sub_totals) / DetailTransaction.objects.filter(transaction__create_at__year=y).count()
+
+        "'Avarage Items per Sales'"
+        dt = DetailTransaction.objects.filter(transaction__create_at__year=y)
+        tr = Transactions.objects.filter(create_at__year=y).filter(paid_of=True)
+        avis = dt.count()/tr.count()
         return render(request, self.template_name, {
-            'data': self.data,
-            'min_income': self.min_income,
-            'max_income': self.max_income,
-            'year': self.year,
-            'month_label': self.month_label,
-            'transactions': self.transactions,
+            'data': data,
+            'month_label': month_label,
+            'mn': calendar.month_name[int(today.strftime("%m"))],
+            'trn_wdgt': tr.count(),
+            'avgs': round(avgs, 2),
+            'avis': round(avis, 2),
         })
 
-
-
-class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
-    template_name = ''
+class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = 'admin/transaction_report_today.html'
+    permission_required = ''
+    login_url = '/login'
+    transactions = None
 
     def get(self, request):
-        pass
+        "All transactions in today"
+        today = datetime.datetime.now()
+        y, m, d  = today.strftime('%Y'),today.strftime('%m'),today.strftime('%d')
+        data , month_label, items= [],[], []
+        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d).filter(paid_of=True)
+        sh, eh=0,1
+        for i in range(12):
+            month_label.append(f"{sh}-{eh}")
+            tsh, teh= trans.filter(create_at__hour=sh), trans.filter(create_at__hour=eh)
+            sub_totals = []
+            for s in tsh:
+                d_sh = DetailTransaction.objects.filter(transaction__id=s.id)
+                items.append(d_sh.count())
+                for d in d_sh:
+                    sub_totals.append(d.sub_total)
+            for e in teh:
+                d_eh = DetailTransaction.objects.filter(transaction__id=e.id)
+                for d in d_eh:
+                    items.append(d.quantity)
+                    sub_totals.append(d.sub_total)
+            data.append(sum(sub_totals))
+            sh+=2
+            eh+=2
+
+        "'Avarage Sales Value'"
+        try:
+            avgs = sum(data) /trans.count()
+        except:
+            avgs = 0
+
+        "'Avarage Items per Sales'"
+        try:
+            avis = sum(items)/trans.count()
+        except:
+            avis=0
+        return render(request, self.template_name, {
+            'data': data,
+            'now': today.strftime("%Y-%m-%d"),
+            'month_label': month_label,
+            'trn_wdgt': trans.count(),
+            'avgs': round(avgs, 2),
+            'avis': round(avis, 2),
+        })
+class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
+    template_name = 'admin/report_by_daterange.html'
+
+    def get(self, request):
+        data, labels, items = [], [], []
+        try:
+            tgl = request.GET['date_range']
+            start = tgl[0:10]
+            end = tgl[13:]
+            start = datetime.datetime.strptime(start, '%d/%m/%Y')
+            end = datetime.datetime.strptime(end, '%d/%m/%Y')
+            for n in dateRange(start, end):
+                labels.append(n.strftime("%Y-%m-%d")) #label
+                y, m ,d = n.strftime("%Y"), n.strftime("%m"), n.strftime("%d")
+                trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d)
+                print(f'Transaksi pada {n.strftime("%Y-%m-%d")} : {trans.count()}')
+                trans_total=[]
+                for t in trans:
+                    dt_total = []
+                    dt = DetailTransaction.objects.filter(transaction__id=t.id)
+                    for d in dt:
+                        items.append(d.quantity)
+                        dt_total.append(d.sub_total)
+                    trans_total.append(sum(dt_total))
+                data.append(sum(trans_total))
+            print(f"panjang data : {len(data)}, panjang label {len(labels)}")
+            print(data)
+            print(labels)
+            trn_wgt = Transactions.objects.filter(create_at__date__range=[start.strftime("%Y-%m-%d"),end.strftime("%Y-%m-%d")]).count()
+            avgs = sum(data)/trn_wgt
+            avis = sum(items)/trn_wgt
+        except:
+             trn_wgt, avgs, avis, tgl =0, 0 , 0, None
+        try:
+            pass
+        except:
+           pass
+        return render(request, self.template_name, {
+            'data':data,
+            'labels':labels,
+            'trn_wdgt': trn_wgt,
+            "avgs":avgs,
+            'avis':avis,
+            'label': tgl
+
+        })
