@@ -148,17 +148,24 @@ class AddCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
         print(request.POST)
         print(request.FILES)
         if form.is_valid():
-            print('Valid')
-            obj = Members()
-            obj.customers = form.cleaned_data['customers']
-            obj.card_member = form.cleaned_data['card_member']
-            obj.gender = form.cleaned_data['gender']
-            try:
-                obj.photo = request.FILES['photo']
-            except:
+            if form.cleaned_data['password']==form.cleaned_data['password2']:
                 pass
-            obj.save()
-            return redirect('/accounts')
+                obj = Members()
+                usr = User()
+                usr.username = form.cleaned_data['username']
+                usr.password = form.cleaned_data['password']
+                usr.first_name= form.cleaned_data['first_name']
+                usr.last_name= form.cleaned_data['last_name']
+                usr.save()
+                obj.customers = usr
+                obj.card_member = form.cleaned_data['card_member']
+                obj.gender = form.cleaned_data['gender']
+                try:
+                    obj.photo = request.FILES['photo']
+                except:
+                    pass
+                obj.save()
+                return redirect('/accounts')
         return HttpResponse(request, form.errors)
 
 

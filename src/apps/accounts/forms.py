@@ -60,14 +60,29 @@ class RegisterMemberForm(forms.Form):
 
 class CustomersForm(forms.Form):
     GENDER = (
-        ('l', 'L'),
-        ('f', "P")
+        ('m', 'M'),
+        ('f', "F")
     )
-    customers = forms.ModelChoiceField(label='Members',queryset=mdl_account.User.objects.all(),widget=forms.Select(
-        attrs={
-            'class': 'form-control',
-        }
-    ))
+    username = forms.CharField(label="Username", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+    first_name = forms.CharField(label="First Name", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+    last_name = forms.CharField(label="Last Name", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+    password = forms.CharField(label="Password", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'type': 'password'
+    }))
+
+    password2 = forms.CharField(label="Confirm Password", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'type': 'password'
+    }))
     card_member = forms.ModelChoiceField(label='Card Member',queryset=mdl_account.CardMembers.objects.all(), widget=forms.Select(
         attrs={
             'class': 'form-control'
