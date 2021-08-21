@@ -112,7 +112,7 @@ class ListCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request):
         categories_list = Categories.objects.all()
         p = Paginator(categories_list, 5)
-        page = request.GET.get('page', 5)
+        page = request.GET.get('page')
         categories = p.get_page(page)
         return render(request, self.template_name, {
             'categories': categories,
@@ -183,9 +183,14 @@ class ListUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'items.view_unit'
 
     def get(self, request):
-        obj = Unit.objects.all()
+        unit_list = Unit.objects.all()
+        p = Paginator(unit_list, 5)
+        page = request.GET.get('page')
+        unit = p.get_page(page)
         return render(request, self.template_name,{
-            'obj': obj
+            'unit': unit,
+            'page': p,
+            'data': unit.object_list
         })
 
 class AddUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
