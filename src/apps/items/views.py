@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMix
 from .forms import *
 from django.http import HttpResponse
 from mypermissionmixin.custommixin import ValidatePermissionMixin
+from django.core.paginator import Paginator
 
 
 
@@ -109,9 +110,14 @@ class ListCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'items.view_categories'
 
     def get(self, request):
-        obj = Categories.objects.all()
+        categories_list = Categories.objects.all()
+        p = Paginator(categories_list, 5)
+        page = request.GET.get('page', 5)
+        categories = p.get_page(page)
         return render(request, self.template_name, {
-            'obj': obj
+            'categories': categories,
+            'page': p,
+            'data': categories.object_list
         })
 
 
