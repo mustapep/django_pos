@@ -29,7 +29,7 @@
             <th>User</th>
             <th>Address</th>
             <th>NIK</th>
-            <th>Create at</th>
+            <th>Photo</th>
             <th>Create at</th>
             <th></th>
           </tr>
@@ -40,7 +40,9 @@
                 <td>{{o.user}}</td>
                 <td>{{o.address}}</td>
                 <td>{{o.nik_numb}}</td>
-                <td>{{o.ktp_image}}</td>
+                <td>
+                  <img src="{{o.ktp_image.url}}" alt="" id="img_card">
+                </td>
                 <td>{{o.create_at}}</td>
                 <td>
                     <a href="/accounts/sales/{{o.id}}/edit" class="btn btn-info">
