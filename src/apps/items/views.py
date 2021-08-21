@@ -17,7 +17,7 @@ class ListItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request):
         item_list = Items.objects.all()
         p = Paginator(item_list, 5)
-        page = request.GET.get('page', 5)
+        page = request.GET.get('page')
         items = p.get_page(page)
         print(request.user.is_authenticated)
         return render(request, self.template_name, {

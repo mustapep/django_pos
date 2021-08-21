@@ -436,8 +436,8 @@ class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'data':data,
             'labels':labels,
             'trn_wdgt': trn_wgt,
-            "avgs":avgs,
-            'avis':avis,
+            "avgs":round(avgs,2),
+            'avis':round(avis,2),
             'label': tgl
 
         })
