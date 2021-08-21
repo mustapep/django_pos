@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from mypermissionmixin.custommixin import ValidatePermissionMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
+from django.core.paginator import Paginator
 
 
 class Login(View):
@@ -229,9 +230,14 @@ class ListSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        obj = Sales.objects.all()
+        sales_list = Sales.objects.all()
+        p = Paginator(sales_list, 5)
+        page = request.GET.get('page')
+        sales = p.get_page(page)
         return render(request, self.template_name, {
-            'obj': obj
+            'sales': sales,
+            'page': p,
+            'data': sales.object_list
         })
 
 
