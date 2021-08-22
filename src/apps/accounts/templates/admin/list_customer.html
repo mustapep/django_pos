@@ -38,7 +38,15 @@
             {% for o in members %}
             <tr>
                 <td>{{o.customers.username}}</td>
-                <td>{{o.gender}}</td>
+                {% if o.gender == m %}
+                <td>
+                  Male
+                </td>
+                {% else %}
+                  <td>
+                    Female
+                  </td>
+                {% endif %}
                 <td>{{o.photo.url}}</td>
                 <td>{{o.card_member}}</td>
                 <td>{{o.create_at}}</td>

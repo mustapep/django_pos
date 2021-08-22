@@ -134,7 +134,8 @@ class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
         return render(request, self.template_name, {
             'members': members,
             'page': p,
-            'data': members.object_list
+            'data': members.object_list,
+            'm': 'm'
         })
 
 
