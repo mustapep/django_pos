@@ -127,9 +127,14 @@ class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
 
-        obj = Members.objects.all()
+        member_list = Members.objects.all()
+        p = Paginator(member_list, 5)
+        page = request.GET.get('page')
+        members = p.get_page(page)
         return render(request, self.template_name, {
-            'obj': obj
+            'members': members,
+            'page': p,
+            'data': members.object_list
         })
 
 
