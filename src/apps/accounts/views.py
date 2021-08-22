@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm, SalesEditForm
+from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm, SalesEditForm, CustomerEditForm
 from django.http import HttpResponse
 from .models import User, Members, Sales
 from django.contrib import messages
@@ -184,13 +184,15 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
         obj = Members.objects.get(id=id)
 
         data = {
-            "customers": obj.customers,
+            'username': obj.customers.username,
+            'first_name': obj.customers.first_name,
+            'last_name': obj.customers.last_name,
             "gender": obj.gender,
             "card_member": obj.card_member,
             "photo": obj.photo,
         }
 
-        form = CustomersForm(initial=data)
+        form = CustomerEditForm(initial=data)
 
         return render(request, self.template_name, {
             'form': form,
@@ -199,9 +201,14 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def post(self, request, id):
         obj = Members.objects.get(id=id)
-        form = CustomersForm(request.POST, request.FILES)
+        usr = User.objects.get(id=obj.customers.id)
+        form = CustomerEditForm(request.POST, request.FILES)
         if form.is_valid():
-            obj.customers = form.cleaned_data['customers']
+            usr.username = form.cleaned_data['username']
+            usr.first_name = form.cleaned_data['first_name']
+            usr.last_name = form.cleaned_data['last_name']
+            usr.set_password = form.cleaned_data['password']
+            usr.save()
             obj.gender = form.cleaned_data['gender']
             obj.card_member = form.cleaned_data['card_member']
             try:

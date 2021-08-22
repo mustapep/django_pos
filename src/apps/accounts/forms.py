@@ -57,11 +57,44 @@ class RegisterMemberForm(forms.Form):
 
     photo = forms.ImageField(label='Photo')
 
+class CustomerEditForm(forms.Form):
+    GENDER = (
+        ('m', 'Male'),
+        ('f', "Female")
+    )
+    username = forms.CharField(label="Username", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+    first_name = forms.CharField(label="First Name", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+
+    last_name = forms.CharField(label="Last Name", widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+    password = forms.CharField(label="Password", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'type': 'password',
+        'placeholder': 'change your password in here'
+    }), required=False)
+    photo = forms.ImageField(label='Photo', required=False)
+    card_member = forms.ModelChoiceField(label='Card Member',queryset=mdl_account.CardMembers.objects.all(), widget=forms.Select(
+        attrs={
+            'class': 'form-control'
+        }
+    ))
+    gender = forms.CharField(label='Gender', widget=forms.Select(attrs={
+        'class': 'form-control'
+    },choices=GENDER))
+
+    
+
 
 class CustomersForm(forms.Form):
     GENDER = (
-        ('m', 'M'),
-        ('f', "F")
+        ('m', 'Male'),
+        ('f', "Female")
     )
     username = forms.CharField(label="Username", widget=forms.TextInput(attrs={
         'class': 'form-control'
