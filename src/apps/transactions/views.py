@@ -6,7 +6,7 @@ from .models import Transactions, DetailTransaction, PaymentMethods
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import SalesCreateOrderForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from django.http import HttpResponse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from mypermissionmixin.custommixin import ValidatePermissionMixin
 from .helper import income, dateRange
 import calendar
@@ -20,9 +20,14 @@ class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request):
 
         t_all = Transactions.objects.filter(paid_of=False)
+        p = Paginator(t_all, 5)
+        page = request.GET.get('page')
+        trans = p.get_page(page)
 
         return render(request, self.template_name, {
-            "t_all": t_all
+            "trans": trans,
+            'page': p,
+            'data': trans.object_list,
         })
 
 
@@ -31,9 +36,14 @@ class ListTransactionsOutView(LoginRequiredMixin, ValidatePermissionMixin, View)
 
     def get(self, request):
         t_all = Transactions.objects.filter(paid_of=True)
+        p = Paginator(t_all, 5)
+        page = request.GET.get('page')
+        trans = p.get_page(page)
 
         return render(request, self.template_name, {
-            "t_all": t_all
+            "trans": trans,
+            'page': p,
+            'data': trans.object_list
         })
 
 
