@@ -29,18 +29,20 @@
             <th>User</th>
             <th>Address</th>
             <th>NIK</th>
-            <th>Create at</th>
+            <th>Photo</th>
             <th>Create at</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-            {% for o in obj %}
+            {% for o in sales %}
             <tr>
                 <td>{{o.user}}</td>
                 <td>{{o.address}}</td>
                 <td>{{o.nik_numb}}</td>
-                <td>{{o.ktp_image}}</td>
+                <td>
+                  <img src="{{o.ktp_image.url}}" alt="" id="img_card">
+                </td>
                 <td>{{o.create_at}}</td>
                 <td>
                     <a href="/accounts/sales/{{o.id}}/edit" class="btn btn-info">
@@ -54,6 +56,59 @@
             {% endfor %}
         </tbody>
       </table>
+      <div>
+        <ul class="pagination">
+            {% if  sales.has_previous %}
+              <li class="page-item">
+                <a href="?page={{sales.number|add:'-1'}}" class="page-link">Previous</a>
+              </li>
+              {% for i in page.page_range %}
+                {% if i == sales.number %}
+                <li class="paginate_button page-item active">
+                  <a href="?page={{i}}" class='page-link '>{{i}}</a>
+                </li>
+                {% else %}
+                <li class="paginate_button page-item">
+                  <a href="?page={{i}}" class='page-link'>{{i}}</a>
+                </li>
+                {% endif %}
+              {% endfor %}
+              {% if sales.has_next %}
+              <li class="paginate_button page-item">
+                <a href="?page={{sales.number|add:'+1'}}" class='page-link '>Next</a>
+              </li>
+              {% else %}
+              <li class="paginate_button page-item disabled">
+                <a href="" class='page-link '>Next</a>
+              </li>
+              {% endif %}
+            {% else %}
+            <li class="page-item disabled">
+              <a href="" class="page-link">Previous</a>
+            </li>
+            {% for i in page.page_range %}
+                {% if i == sales.number %}
+                <li class="paginate_button page-item active">
+                  <a href="?page={{i}}" class='page-link '>{{i}}</a>
+                </li>
+                {% else %}
+                <li class="paginate_button page-item">
+                  <a href="?page={{i}}" class='page-link'>{{i}}</a>
+                </li>
+                {% endif %}
+              {% endfor %}
+              {% if sales.has_next %}
+                <li class="paginate_button page-item">
+                  <a href="?page={{sales.number|add:'+1'}}" class='page-link '>Next</a>
+                </li>
+              {% else %}
+                <li class="paginate_button page-item disabled">
+                  <a href="?page={{sales.number|add:'+1'}}" class='page-link '>Next</a>
+                </li>
+            {% endif %}
+          {% endif %}
+          </ul>
+    </div>
     </div>
     <!-- /.card-body -->
   </div>

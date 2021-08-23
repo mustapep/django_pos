@@ -29,21 +29,19 @@
               <table class="table table-bordered">
                 <thead>
                   <tr role="row" >
-                    <th class="sorting sorting_asc" style="text-align: center;">Date</th>
+                    <th class="sorting sorting_asc" style="text-align: center;">Customer</th>
                     <th class="sorting sorting_asc" style="text-align: center;">Employee</th>
                     <th class="sorting sorting_asc" style="text-align: center;">Payment Method</th>
-                    <th class="sorting sorting_asc" style="text-align: center;">total</th>
-                    <th class="sorting sorting_asc" style="text-align: center;">Create at</th>
+                    <th class="sorting sorting_asc" style="text-align: center;">Date</th>
                     <th class="sorting sorting_asc" style="text-align: center;"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for t in t_all %}
+                  {% for t in data %}
                   <tr>
-                        <td style="text-align: center;">{{t.create_at}}</td>
+                        <td style="text-align: center;">{{t.member}}</td>
                         <td style="text-align: center;">{{t.sales}}</td>
                         <td style="text-align: center;">{{t.payment_method}}</td>
-                        <td style="text-align: center;">{{t.paid_of}}</td>
                         <td style="text-align: center;">{{t.create_at}}</td>
                         <td>
                             <a href="/transactions/{{t.id}}/detail_transaction" class="btn btn-secondary">
@@ -60,6 +58,59 @@
                   {% endfor %}
                 </tbody>
               </table>
+              <div>
+                <ul class="pagination">
+                  {% if  trans.has_previous %}
+                    <li class="page-item">
+                      <a href="?page={{trans.number|add:'-1'}}" class="page-link">Previous</a>
+                    </li>
+                    {% for i in page.page_range %}
+                      {% if i == trans.number %}
+                      <li class="paginate_button page-item active">
+                        <a href="?page={{i}}" class='page-link '>{{i}}</a>
+                      </li>
+                      {% else %}
+                      <li class="paginate_button page-item">
+                        <a href="?page={{i}}" class='page-link'>{{i}}</a>
+                      </li>
+                      {% endif %}
+                    {% endfor %}
+                    {% if trans.has_next %}
+                    <li class="paginate_button page-item">
+                      <a href="?page={{trans.number|add:'+1'}}" class='page-link '>Next</a>
+                    </li>
+                    {% else %}
+                    <li class="paginate_button page-item disabled">
+                      <a href="" class='page-link '>Next</a>
+                    </li>
+                    {% endif %}
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a href="" class="page-link">Previous</a>
+                  </li>
+                  {% for i in page.page_range %}
+                      {% if i == trans.number %}
+                      <li class="paginate_button page-item active">
+                        <a href="?page={{i}}" class='page-link '>{{i}}</a>
+                      </li>
+                      {% else %}
+                      <li class="paginate_button page-item">
+                        <a href="?page={{i}}" class='page-link'>{{i}}</a>
+                      </li>
+                      {% endif %}
+                    {% endfor %}
+                    {% if trans.has_next %}
+                      <li class="paginate_button page-item">
+                        <a href="?page={{trans.number|add:'+1'}}" class='page-link '>Next</a>
+                      </li>
+                    {% else %}
+                      <li class="paginate_button page-item disabled">
+                        <a href="?page={{trans.number|add:'+1'}}" class='page-link '>Next</a>
+                      </li>
+                  {% endif %}
+                {% endif %}
+                </ul>
+              </div>
             </div>
             <!-- /.card-body -->
           </div>

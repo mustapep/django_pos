@@ -3,7 +3,7 @@
 <a href="/items/add" class="btn btn-warning" style="margin-left: 80%; color: aliceblue;">+</a>
 
 <div class="container">
-    {% for o in obj %}
+    {% for o in items %}
     <div class="row">
         <div class="col-2"></div>
         <div class="col-8">
@@ -45,6 +45,59 @@
         <div class="col-2"></div>
     </div>
     {% endfor %}
+    <div>
+        <ul class="pagination">
+            {% if  items.has_previous %}
+              <li class="page-item">
+                <a href="?page={{items.number|add:'-1'}}" class="page-link">Previous</a>
+              </li>
+              {% for i in page.page_range %}
+                {% if i == items.number %}
+                <li class="paginate_button page-item active">
+                  <a href="?page={{i}}" class='page-link '>{{i}}</a>
+                </li>
+                {% else %}
+                <li class="paginate_button page-item">
+                  <a href="?page={{i}}" class='page-link'>{{i}}</a>
+                </li>
+                {% endif %}
+              {% endfor %}
+              {% if items.has_next %}
+              <li class="paginate_button page-item">
+                <a href="?page={{items.number|add:'+1'}}" class='page-link '>Next</a>
+              </li>
+              {% else %}
+              <li class="paginate_button page-item disabled">
+                <a href="" class='page-link '>Next</a>
+              </li>
+              {% endif %}
+            {% else %}
+            <li class="page-item disabled">
+              <a href="" class="page-link">Previous</a>
+            </li>
+            {% for i in page.page_range %}
+                {% if i == items.number %}
+                <li class="paginate_button page-item active">
+                  <a href="?page={{i}}" class='page-link '>{{i}}</a>
+                </li>
+                {% else %}
+                <li class="paginate_button page-item">
+                  <a href="?page={{i}}" class='page-link'>{{i}}</a>
+                </li>
+                {% endif %}
+              {% endfor %}
+              {% if items.has_next %}
+                <li class="paginate_button page-item">
+                  <a href="?page={{items.number|add:'+1'}}" class='page-link '>Next</a>
+                </li>
+              {% else %}
+                <li class="paginate_button page-item disabled">
+                  <a href="?page={{items.number|add:'+1'}}" class='page-link '>Next</a>
+                </li>
+            {% endif %}
+          {% endif %}
+          </ul>
+    </div>
 </div>
   
 {% endblock content %}

@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMix
 from .forms import *
 from django.http import HttpResponse
 from mypermissionmixin.custommixin import ValidatePermissionMixin
+from django.core.paginator import Paginator
 
 
 
@@ -14,10 +15,15 @@ class ListItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        obj = Items.objects.all()
+        item_list = Items.objects.all()
+        p = Paginator(item_list, 5)
+        page = request.GET.get('page')
+        items = p.get_page(page)
         print(request.user.is_authenticated)
         return render(request, self.template_name, {
-            'obj': obj,
+            'items': items,
+            'page': p,
+            'data': items.object_list
         })
 
 
@@ -109,9 +115,14 @@ class ListCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'items.view_categories'
 
     def get(self, request):
-        obj = Categories.objects.all()
+        categories_list = Categories.objects.all()
+        p = Paginator(categories_list, 5)
+        page = request.GET.get('page')
+        categories = p.get_page(page)
         return render(request, self.template_name, {
-            'obj': obj
+            'categories': categories,
+            'page': p,
+            'data': categories.object_list
         })
 
 
@@ -177,9 +188,14 @@ class ListUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'items.view_unit'
 
     def get(self, request):
-        obj = Unit.objects.all()
+        unit_list = Unit.objects.all()
+        p = Paginator(unit_list, 5)
+        page = request.GET.get('page')
+        unit = p.get_page(page)
         return render(request, self.template_name,{
-            'obj': obj
+            'unit': unit,
+            'page': p,
+            'data': unit.object_list
         })
 
 class AddUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
