@@ -7,7 +7,7 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
 
 class TransactionsAdmin(admin.ModelAdmin):
-    list_display = ("member", "sales", "payment_method", "card_number", "paid_of", "create_at", "update_at")
+    list_display = ("member", "sales", "payment_method", "card_number", "customer_purchase","paid_of", "create_at", "update_at")
 
 
 class DetailTransactionAdmin(admin.ModelAdmin):
