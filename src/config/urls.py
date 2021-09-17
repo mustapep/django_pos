@@ -32,6 +32,7 @@ urlpatterns = [
 
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
     path('items/', include('apps.items.urls', namespace='items')),
-    path('transactions/', include('apps.transactions.urls', namespace='transaction'))
+    path('transactions/', include('apps.transactions.urls', namespace='transaction')),
+    path('testing/', include('testing.urls', namespace='testing'))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

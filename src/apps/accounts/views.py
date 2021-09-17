@@ -126,6 +126,7 @@ class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
 
         member_list = Members.objects.all()
         p = Paginator(member_list, 5)
@@ -135,7 +136,8 @@ class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'members': members,
             'page': p,
             'data': members.object_list,
-            'm': 'm'
+            'm': 'm',
+            'whoami': str(whoami)
         })
 
 
@@ -145,9 +147,11 @@ class AddCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
         form = CustomersForm()
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
     def post(self, request):
@@ -182,6 +186,7 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request, id):
+        whoami = request.user.groups.all()[0]
         obj = Members.objects.get(id=id)
 
         data = {
@@ -197,7 +202,8 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
@@ -243,6 +249,7 @@ class ListSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
         sales_list = Sales.objects.all()
         p = Paginator(sales_list, 5)
         page = request.GET.get('page')
@@ -250,7 +257,8 @@ class ListSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         return render(request, self.template_name, {
             'sales': sales,
             'page': p,
-            'data': sales.object_list
+            'data': sales.object_list,
+            'whoami': str(whoami)
         })
 
 
@@ -260,11 +268,11 @@ class AddSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        print(request.POST)
-        print(request.FILES)
+        whoami = request.user.groups.all()[0]
         form = SalesForm()
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
 
@@ -293,6 +301,7 @@ class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/edit_sales.html'
 
     def get(self, request, id):
+        whoami = request.user.groups.all()[0]
         obj = Sales.objects.get(id=id)
         data = {
             'username': obj.user.username,
@@ -305,7 +314,8 @@ class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         form = SalesEditForm(initial=data)
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):

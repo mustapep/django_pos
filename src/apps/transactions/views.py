@@ -23,11 +23,13 @@ class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         p = Paginator(t_all, 5)
         page = request.GET.get('page')
         trans = p.get_page(page)
+        whoami = request.user.groups.all()[0]
 
         return render(request, self.template_name, {
             "trans": trans,
             'page': p,
             'data': trans.object_list,
+            'whoami': str(whoami)
         })
 
 
@@ -39,11 +41,13 @@ class ListTransactionsOutView(LoginRequiredMixin, ValidatePermissionMixin, View)
         p = Paginator(t_all, 5)
         page = request.GET.get('page')
         trans = p.get_page(page)
+        whoami = request.user.groups.all()[0]
 
         return render(request, self.template_name, {
             "trans": trans,
             'page': p,
-            'data': trans.object_list
+            'data': trans.object_list,
+            'whoami': str(whoami)
         })
 
 
@@ -57,6 +61,7 @@ class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         form = SalesCreateOrderForm(request.POST)
         fp = CustomerPurchaseForm(request.POST)
         trn = Transactions.objects.get(id=id)
+        whoami = request.user.groups.all()[0]
         dt = DetailTransaction.objects.filter(transaction=trn)
         print(dt)
         total = []
@@ -73,7 +78,8 @@ class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
             't_i': sum(total_item),
             't_p': sum(total),
             'id': id,
-            'fp': fp
+            'fp': fp,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
@@ -108,9 +114,11 @@ class AddTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request):
 
         form = TransactionForm(request.POST)
+        whoami = request.user.groups.all()[0]
 
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
     def post(self, request):
@@ -141,7 +149,7 @@ class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request, id):
 
         obj = Transactions.objects.get(id=id)
-        print(obj.card_number)
+        whoami = request.user.groups.all()[0]
 
         data = {
             'member': obj.member,
@@ -153,7 +161,8 @@ class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         form = TransactionForm(initial=data)
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
@@ -189,8 +198,10 @@ class PaymentListView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
         obj = PaymentMethods.objects.all()
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
-            'obj': obj
+            'obj': obj,
+            'whoami': str(whoami)
         })
 
 
@@ -201,8 +212,10 @@ class AddPaymentView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
         form = PaymentForm()
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
     def post(self, request):
@@ -222,13 +235,15 @@ class EditPamentView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request, id):
         obj = PaymentMethods.objects.get(id=id)
+        whoami = request.user.groups.all()[0]
         data = {
             'name': obj.name
         }
         form = PaymentForm(initial=data)
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
@@ -257,6 +272,7 @@ class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def post(self, request, id):
         form = CustomerPurchaseForm(request.POST)
+        whoami = request.user.groups.all()[0]
         if form.is_valid():
             trn = Transactions.objects.get(id=id)
             trn.customer_purchase = int(form.cleaned_data['paying_off'])
@@ -279,6 +295,7 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     month_label = []
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
         self.data, self.month_label = [], []
         today = datetime.datetime.now()
         sy = today.strftime("%Y")
@@ -308,6 +325,7 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'trn_wdgt': Transactions.objects.filter(create_at__year=sy).filter(paid_of=True).count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
+            'whoami': str(whoami)
         })
 class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/transaction_report_month.html'
@@ -319,6 +337,7 @@ class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     transactions = None
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
         today = datetime.datetime.now()
         y = today.strftime("%Y")
         d = calendar.monthrange(int(y),int(today.strftime("%m")))[1]
@@ -353,6 +372,7 @@ class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'trn_wdgt': tr.count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
+            'whoami': str(whoami)
         })
 
 class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
@@ -362,6 +382,7 @@ class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     transactions = None
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
         "All transactions in today"
         today = datetime.datetime.now()
         y, m, d  = today.strftime('%Y'),today.strftime('%m'),today.strftime('%d')
@@ -404,11 +425,13 @@ class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'trn_wdgt': trans.count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
+            'whoami': str(whoami)
         })
 class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/report_by_daterange.html'
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
         data, labels, items = [], [], []
         try:
             tgl = request.GET['date_range']
@@ -448,6 +471,7 @@ class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'trn_wdgt': trn_wgt,
             "avgs":round(avgs,2),
             'avis':round(avis,2),
-            'label': tgl
+            'label': tgl,
+            'whoami': str(whoami)
 
         })

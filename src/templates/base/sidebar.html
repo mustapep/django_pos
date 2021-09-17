@@ -1,112 +1,144 @@
  {% load static %}
  <!-- Main Sidebar Container -->
- <nav class="mt-2">
-  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <li class="nav-item">
-      <a href="/items" class="nav-link">
-        <i class="far fa-landmark nav-icon"></i>
-        <p>
-          Master
-          <i class="right fas fa-angle-left"></i>
-        </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
-          <a href="/items/categories" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Categories</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/items/unit" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Unit</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/items" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Items</p>
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li class="nav-item">
-      <a href="/items" class="nav-link">
-        <i class="nav-icon far fa-user"></i>
-        <p>
-          Users
-          <i class="right fas fa-angle-left"></i>
-        </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
-          <a href="/accounts/sales" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Sales</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/accounts" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Member</p>
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li class="nav-item">
-      <a href="/items" class="nav-link">
-        <i class="nav-icon far fa-clipboard"></i>
-        <p>
-          Transactions
-          <i class="right fas fa-angle-left"></i>
-        </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
-          <a href="/transactions" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>order</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/transactions/out" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>payment</p>
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li class="nav-item">
-      <a href="/transactions/payment" class="nav-link">
-        <i class="nav-icon fas fa-credit-card"></i>
-        <p>
-          Payment Methods
-        </p>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="/items" class="nav-link">
-        <i class="nav-icon far fa-chart-bar"></i>
-        <p>
-          Report
-          <i class="right fas fa-angle-left"></i>
-        </p>
-      </a>
-      <ul class="nav nav-treeview">
-        <li class="nav-item">
-          <a href="/transactions/report/today" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Dasboard</p>
-          </a>
-        <li class="nav-item">
-          <a href="/transactions/report/date_range" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
-            <p>Date Range</p>
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li class="nav-header">MISCELLANEOUS</li>
-  </ul>
-</nav>
+ {% if whoami == "sales" %}
+  <nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      <li class="nav-item">
+        <a href="/items" class="nav-link">
+          <i class="nav-icon far fa-clipboard"></i>
+          <p>
+            Transactions
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/transactions" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>order</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/transactions/out" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>payment</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  {% else %}
+  <nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      <li class="nav-item">
+        <a href="/items" class="nav-link">
+          <i class="far fa-landmark nav-icon"></i>
+          <p>
+            Master
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/items/categories" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Categories</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/items/unit" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Unit</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/items" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Items</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a href="/items" class="nav-link">
+          <i class="nav-icon far fa-user"></i>
+          <p>
+            Users
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/accounts/sales" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Sales</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/accounts" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Member</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a href="/items" class="nav-link">
+          <i class="nav-icon far fa-clipboard"></i>
+          <p>
+            Transactions
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/transactions" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>order</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/transactions/out" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>payment</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a href="/transactions/payment" class="nav-link">
+          <i class="nav-icon fas fa-credit-card"></i>
+          <p>
+            Payment Methods
+          </p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/items" class="nav-link">
+          <i class="nav-icon far fa-chart-bar"></i>
+          <p>
+            Report
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/transactions/report/today" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Dasboard</p>
+            </a>
+          <li class="nav-item">
+            <a href="/transactions/report/date_range" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Date Range</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-header">MISCELLANEOUS</li>
+    </ul>
+  </nav>
+   
+ {% endif %}
+ 
