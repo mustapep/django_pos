@@ -18,8 +18,10 @@ class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'transactions.view_transactions'
 
     def get(self, request):
-
-        t_all = Transactions.objects.filter(paid_of=False)
+        if request.user.groups.all()[0]=='admin' or request.user.is_superuser:
+            t_all = Transactions.objects.filter(paid_of=False)
+        else:
+            t_all = Transactions.objects.filter(sales=request.user.user).filter(paid_of=False)
         p = Paginator(t_all, 5)
         page = request.GET.get('page')
         trans = p.get_page(page)
@@ -118,17 +120,15 @@ class AddTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
         return render(request, self.template_name, {
             'form': form,
-            'whoami': str(whoami)
+            'whoami': str(whoami),
         })
 
     def post(self, request):
         form = TransactionForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data['card_number'])
-            print(type(form.cleaned_data['member']))
             trn = Transactions()
             trn.member = form.cleaned_data['member']
-            trn.sales = form.cleaned_data['sales']
+            trn.sales = request.user.user
             trn.payment_method = form.cleaned_data['payment_method']
             try:
                 trn.card_number = form.cleaned_data['card_number']
@@ -170,7 +170,7 @@ class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             trn = Transactions.objects.get(id=id)
             trn.member = form.cleaned_data['member']
-            trn.sales = form.cleaned_data['sales']
+            trn.sales = request.user.user
             trn.payment_method = form.cleaned_data['payment_method']
             trn.card_number = form.cleaned_data['card_number']
             trn.save()

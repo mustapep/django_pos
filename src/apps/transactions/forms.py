@@ -27,11 +27,6 @@ class TransactionForm(forms.Form):
             'class': 'form-control'
         },
     ), required=False)
-    sales = forms.ModelChoiceField(queryset=Sales.objects.all(),label='Sales', widget=forms.Select(
-        attrs={
-            'class': 'form-control'
-        }
-    ))
     payment_method = forms.ModelChoiceField(queryset=PaymentMethods.objects.all(),label='Payment Method', widget=forms.Select(
         attrs={
             'class': 'form-control'

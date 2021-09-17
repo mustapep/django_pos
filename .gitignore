@@ -135,3 +135,4 @@ GitHub.sublime-settings
 /src/apps/transactions/migrations/0004_detailtransaction_sub_total.py
 /src/apps/items/migrations/0005_auto_20210630_2106.py
 /src/apps/accounts/migrations/0002_auto_20210710_1833.py
+/src/apps/items/migrations/0006_auto_20210722_1713.py
