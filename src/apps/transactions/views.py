@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import SalesCreateOrderForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from django.http import HttpResponse
 from django.core.paginator import Paginator
+from apps.accounts.models import Employee
 from mypermissionmixin.custommixin import ValidatePermissionMixin
 from .helper import income, dateRange
 import calendar
@@ -15,15 +16,16 @@ import calendar
 class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
     template_name = 'list_transaction.html'
-    permission_required = 'transactions.view_transactions'
+    permission_required = 'transactions.view_transaction'
 
     def get(self, request):
         if request.user.groups.all()[0]=='admin' or request.user.is_superuser:
             t_all = Transaction.objects.filter(paid_of=False)
         else:
-            t_all = Transaction.objects.filter(sales=request.user.user).filter(paid_of=False)
+            t_all = Transaction.objects.filter(paid_of=False, employee=request.user.employee)
         p = Paginator(t_all, 5)
         page = request.GET.get('page')
+        print('p.get_page', p.get_page(page))
         trans = p.get_page(page)
         whoami = request.user.groups.all()[0]
 
@@ -128,7 +130,7 @@ class AddTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             trn = Transaction()
             trn.member = form.cleaned_data['member']
-            trn.sales = request.user.user
+            trn.employee = request.user.employee
             trn.payment_method = form.cleaned_data['payment_method']
             try:
                 trn.card_number = form.cleaned_data['card_number']
@@ -153,7 +155,7 @@ class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
         data = {
             'member': obj.member,
-            'sales': obj.sales,
+            'sales': obj.employee,
             'payment_method': obj.payment_method,
             'card_number': obj.card_number,
 
@@ -170,7 +172,7 @@ class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             trn = Transaction.objects.get(id=id)
             trn.member = form.cleaned_data['member']
-            trn.sales = request.user.user
+            trn.employee = request.user
             trn.payment_method = form.cleaned_data['payment_method']
             trn.card_number = form.cleaned_data['card_number']
             trn.save()
