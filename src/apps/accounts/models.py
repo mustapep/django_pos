@@ -29,8 +29,8 @@ class Members(models.Model):
         db_table = 'members'
 
 
-class Sales(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
+class Employee(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee')
     address = models.CharField(max_length=100)
     nik_numb = models.CharField(max_length=12)
     ktp_image = models.ImageField(upload_to='ktp/')
@@ -41,4 +41,4 @@ class Sales(models.Model):
         return str(self.user)
 
     class Meta:
-        db_table = 'sales'
+        db_table = 'employees'

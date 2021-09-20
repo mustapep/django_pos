@@ -1,7 +1,7 @@
 from django import forms
 from .models import Transaction
 from apps.items.models import Items
-from apps.accounts.models import Members, Sales
+from apps.accounts.models import Members, Employee
 from apps.items.models import Categories, Items
 from apps.transactions.models import PaymentMethod
 

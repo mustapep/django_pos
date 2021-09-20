@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm, SalesEditForm, CustomerEditForm
 from django.http import HttpResponse
-from .models import User, Members, Sales
+from .models import User, Members, Employee
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from mypermissionmixin.custommixin import ValidatePermissionMixin
@@ -250,7 +250,7 @@ class ListSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
         whoami = request.user.groups.all()[0]
-        sales_list = Sales.objects.all()
+        sales_list = Employee.objects.all()
         p = Paginator(sales_list, 5)
         page = request.GET.get('page')
         sales = p.get_page(page)
@@ -286,7 +286,7 @@ class AddSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
                 usr.last_name = form.cleaned_data['last_name']
                 usr.groups.add(grp)
                 usr.save()
-                sales = Sales()
+                sales = Employee()
                 sales.user = usr
                 sales.address = form.cleaned_data['address']
                 sales.nik_numb = int(form.cleaned_data['nik_numb'])
@@ -302,7 +302,7 @@ class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request, id):
         whoami = request.user.groups.all()[0]
-        obj = Sales.objects.get(id=id)
+        obj = Employee.objects.get(id=id)
         data = {
             'username': obj.user.username,
             'first_name': obj.user.first_name,
@@ -323,7 +323,7 @@ class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         print(request.POST)
         print(request.FILES)
         if form.is_valid():
-            obj = Sales.objects.get(id=id)
+            obj = Employee.objects.get(id=id)
             obj.user.username = form.cleaned_data['username']
             obj.user.first_name = form.cleaned_data['first_name']
             obj.user.last_name = form.cleaned_data['last_name']
@@ -346,7 +346,7 @@ class DeleteSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'accounts.delete_sales'
     login_url = '/login'
     def get(self, request, id):
-        s = Sales.objects.get(id=id)
+        s = Employee.objects.get(id=id)
         s.delete()
         return redirect('/accounts/sales')
 
