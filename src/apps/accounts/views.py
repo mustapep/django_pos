@@ -17,7 +17,7 @@ class Login(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            if Group.objects.get(name='sales') in request.user.groups.all():
+            if Group.objects.get(name='employee') in request.user.groups.all():
                 return redirect('/transactions')
             elif Group.objects.get(name='admin') in request.user.groups.all():
                 return redirect('/items')
@@ -37,7 +37,7 @@ class RegisterView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            if Group.objects.get(name='sales') in request.user.groups.all():
+            if Group.objects.get(name='employee') in request.user.groups.all():
                 return redirect('/transactions')
             elif Group.objects.get(name='admin') in request.user.groups.all():
                 return redirect('/items')
@@ -58,7 +58,7 @@ class RegisterSaveView(View):
             print(form)
             print('request POST :', request.POST)
             print('request FILES :', request.FILES)
-            if request.POST['ptransactionsassword'] == request.POST['password2']:
+            if request.POST['password'] == request.POST['password2']:
                 usr = User()
                 usr.username = form.cleaned_data['username']
                 usr.first_name = form.cleaned_data['first_name']
