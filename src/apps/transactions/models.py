@@ -16,9 +16,9 @@ class PaymentMethod(models.Model):
 
 
 class Transaction(models.Model):
-    member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='members', null=True, blank=True)
-    sales = models.ForeignKey(Sales, on_delete=models.CASCADE, related_name='sales')
-    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, related_name='payment_method')
+    member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='transactions', null=True, blank=True)
+    sales = models.ForeignKey(Sales, on_delete=models.CASCADE, related_name='transactions')
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, related_name='transactions')
     card_number = models.IntegerField(null=True, blank=True)
     paid_of = models.BooleanField(default=False)
     customer_purchase = models.IntegerField(null=True, blank=True)
@@ -33,8 +33,8 @@ class Transaction(models.Model):
 
 
 class DetailTransaction(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='trans')
-    detail_item = models.ForeignKey(Items, on_delete=models.CASCADE, related_name='dti')
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='detail_transactions')
+    detail_item = models.ForeignKey(Items, on_delete=models.CASCADE, related_name='detail_transactions')
     quantity = models.IntegerField(default=1)
     item_price = models.IntegerField(null=True, blank=True)
     sub_total = models.IntegerField(null=True, blank=True)
