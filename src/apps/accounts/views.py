@@ -92,7 +92,7 @@ class LoginProcess(View):
             usr = authenticate(username=username, password=password)
             try:
                 if usr.is_authenticated:
-                    if Group.objects.get(name='sales') in usr.groups.all():
+                    if Group.objects.get(name='employee') in usr.groups.all():
                         login(request, usr)
                         return redirect('/transactions')
                     elif Group.objects.get(name='admin') in usr.groups.all():
@@ -281,7 +281,7 @@ class AddSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             if form.cleaned_data['password'] == form.cleaned_data['password2']:
                 usr = User.objects.create_user(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-                grp = Group.objects.get(name='sales')
+                grp = Group.objects.get(name='employee')
                 usr.first_name = form.cleaned_data['first_name']
                 usr.last_name = form.cleaned_data['last_name']
                 usr.groups.add(grp)
