@@ -3,7 +3,7 @@ from ..accounts.models import Sales, Members
 from ..items.models import Items
 
 
-class PaymentMethods(models.Model):
+class PaymentMethod(models.Model):
     name = models.CharField(max_length=25)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
@@ -15,10 +15,10 @@ class PaymentMethods(models.Model):
         db_table = 'payment_methods'
 
 
-class Transactions(models.Model):
+class Transaction(models.Model):
     member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='members', null=True, blank=True)
     sales = models.ForeignKey(Sales, on_delete=models.CASCADE, related_name='sales')
-    payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, related_name='payment_method')
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, related_name='payment_method')
     card_number = models.IntegerField(null=True, blank=True)
     paid_of = models.BooleanField(default=False)
     customer_purchase = models.IntegerField(null=True, blank=True)
@@ -33,7 +33,7 @@ class Transactions(models.Model):
 
 
 class DetailTransaction(models.Model):
-    transaction = models.ForeignKey(Transactions, on_delete=models.CASCADE, related_name='trans')
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='trans')
     detail_item = models.ForeignKey(Items, on_delete=models.CASCADE, related_name='dti')
     quantity = models.IntegerField(default=1)
     item_price = models.IntegerField(null=True, blank=True)

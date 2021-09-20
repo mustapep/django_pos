@@ -2,7 +2,7 @@ import datetime
 
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Transactions, DetailTransaction, PaymentMethods
+from .models import Transaction, DetailTransaction, PaymentMethod
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import SalesCreateOrderForm, TransactionForm, PaymentForm, CustomerPurchaseForm
 from django.http import HttpResponse
@@ -19,9 +19,9 @@ class ListTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
         if request.user.groups.all()[0]=='admin' or request.user.is_superuser:
-            t_all = Transactions.objects.filter(paid_of=False)
+            t_all = Transaction.objects.filter(paid_of=False)
         else:
-            t_all = Transactions.objects.filter(sales=request.user.user).filter(paid_of=False)
+            t_all = Transaction.objects.filter(sales=request.user.user).filter(paid_of=False)
         p = Paginator(t_all, 5)
         page = request.GET.get('page')
         trans = p.get_page(page)
@@ -39,7 +39,7 @@ class ListTransactionsOutView(LoginRequiredMixin, ValidatePermissionMixin, View)
     template_name = 'list_transactions_out.html'
 
     def get(self, request):
-        t_all = Transactions.objects.filter(paid_of=True)
+        t_all = Transaction.objects.filter(paid_of=True)
         p = Paginator(t_all, 5)
         page = request.GET.get('page')
         trans = p.get_page(page)
@@ -62,7 +62,7 @@ class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request, id):
         form = SalesCreateOrderForm(request.POST)
         fp = CustomerPurchaseForm(request.POST)
-        trn = Transactions.objects.get(id=id)
+        trn = Transaction.objects.get(id=id)
         whoami = request.user.groups.all()[0]
         dt = DetailTransaction.objects.filter(transaction=trn)
         print(dt)
@@ -87,7 +87,7 @@ class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def post(self, request, id):
         form = SalesCreateOrderForm(request.POST)
         if form.is_valid():
-            trn = Transactions.objects.get(id=id)
+            trn = Transaction.objects.get(id=id)
             dt = DetailTransaction()
             dt.transaction = trn
             dt.detail_item = form.cleaned_data['item']
@@ -126,7 +126,7 @@ class AddTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def post(self, request):
         form = TransactionForm(request.POST)
         if form.is_valid():
-            trn = Transactions()
+            trn = Transaction()
             trn.member = form.cleaned_data['member']
             trn.sales = request.user.user
             trn.payment_method = form.cleaned_data['payment_method']
@@ -148,7 +148,7 @@ class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request, id):
 
-        obj = Transactions.objects.get(id=id)
+        obj = Transaction.objects.get(id=id)
         whoami = request.user.groups.all()[0]
 
         data = {
@@ -168,7 +168,7 @@ class EditTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def post(self, request, id):
         form = TransactionForm(request.POST)
         if form.is_valid():
-            trn = Transactions.objects.get(id=id)
+            trn = Transaction.objects.get(id=id)
             trn.member = form.cleaned_data['member']
             trn.sales = request.user.user
             trn.payment_method = form.cleaned_data['payment_method']
@@ -181,7 +181,7 @@ class DeleteTransactionsView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = [('transactions.delete_transactions')]
 
     def get(self, request, id):
-        trn = Transactions.objects.get(id=id)
+        trn = Transaction.objects.get(id=id)
         trn.delete()
         return redirect('/transactions')
 
@@ -197,7 +197,7 @@ class PaymentListView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        obj = PaymentMethods.objects.all()
+        obj = PaymentMethod.objects.all()
         whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
             'obj': obj,
@@ -221,7 +221,7 @@ class AddPaymentView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def post(self, request):
         form = PaymentForm(request.POST)
         if form.is_valid():
-            obj = PaymentMethods()
+            obj = PaymentMethod()
             obj.name = form.cleaned_data['name']
             obj.save()
             return redirect('/transactions/payment')
@@ -234,7 +234,7 @@ class EditPamentView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request, id):
-        obj = PaymentMethods.objects.get(id=id)
+        obj = PaymentMethod.objects.get(id=id)
         whoami = request.user.groups.all()[0]
         data = {
             'name': obj.name
@@ -248,7 +248,7 @@ class EditPamentView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def post(self, request, id):
         form = PaymentForm(request.POST)
-        obj = PaymentMethods.objects.get(id=id)
+        obj = PaymentMethod.objects.get(id=id)
         if form.is_valid():
             obj.name = form.cleaned_data['name']
             obj.save()
@@ -261,7 +261,7 @@ class DeletePaymentView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'transactions.delete_paymentmethods'
 
     def get(self, request, id):
-        obj = PaymentMethods.objects.get(id=id)
+        obj = PaymentMethod.objects.get(id=id)
         obj.delete()
         return redirect('/transactions/payment')
 
@@ -274,7 +274,7 @@ class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
         form = CustomerPurchaseForm(request.POST)
         whoami = request.user.groups.all()[0]
         if form.is_valid():
-            trn = Transactions.objects.get(id=id)
+            trn = Transaction.objects.get(id=id)
             trn.customer_purchase = int(form.cleaned_data['paying_off'])
             trn.paid_of = True
             trn.save()
@@ -313,16 +313,16 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         for s in DetailTransaction.objects.all():
             sub_totals.append(s.sub_total)
         print("sub_total", sub_totals)
-        avgs = sum(sub_totals) / Transactions.objects.all().count()
+        avgs = sum(sub_totals) / Transaction.objects.all().count()
 
         "'Avarage Items per Sales'"
-        avis = DetailTransaction.objects.all().count()/ Transactions.objects.all().count()
+        avis = DetailTransaction.objects.all().count() / Transaction.objects.all().count()
         print('Kesini')
         return render(request, self.template_name, {
             'data': self.data,
             'year': self.year,
             'month_label': self.month_label,
-            'trn_wdgt': Transactions.objects.filter(create_at__year=sy).filter(paid_of=True).count(),
+            'trn_wdgt': Transaction.objects.filter(create_at__year=sy).filter(paid_of=True).count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
             'whoami': str(whoami)
@@ -341,7 +341,7 @@ class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         today = datetime.datetime.now()
         y = today.strftime("%Y")
         d = calendar.monthrange(int(y),int(today.strftime("%m")))[1]
-        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=today.strftime("%m")).filter(paid_of=True)
+        trans = Transaction.objects.filter(create_at__year=y).filter(create_at__month=today.strftime("%m")).filter(paid_of=True)
         print("total transaction :",trans.count())
         data, month_label = [], []
         for i in range(d+1):
@@ -363,7 +363,7 @@ class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
         "'Avarage Items per Sales'"
         dt = DetailTransaction.objects.filter(transaction__create_at__year=y)
-        tr = Transactions.objects.filter(create_at__year=y).filter(paid_of=True)
+        tr = Transaction.objects.filter(create_at__year=y).filter(paid_of=True)
         avis = dt.count()/tr.count()
         return render(request, self.template_name, {
             'data': data,
@@ -387,7 +387,7 @@ class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         today = datetime.datetime.now()
         y, m, d  = today.strftime('%Y'),today.strftime('%m'),today.strftime('%d')
         data , month_label, items= [],[], []
-        trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d).filter(paid_of=True)
+        trans = Transaction.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d).filter(paid_of=True)
         sh, eh=0,1
         for i in range(12):
             month_label.append(f"{sh}-{eh}")
@@ -442,7 +442,7 @@ class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             for n in dateRange(start, end):
                 labels.append(n.strftime("%Y-%m-%d")) #label
                 y, m ,d = n.strftime("%Y"), n.strftime("%m"), n.strftime("%d")
-                trans = Transactions.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d)
+                trans = Transaction.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d)
                 print(f'Transaksi pada {n.strftime("%Y-%m-%d")} : {trans.count()}')
                 trans_total=[]
                 for t in trans:
@@ -456,7 +456,7 @@ class DateRangeReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
             print(f"panjang data : {len(data)}, panjang label {len(labels)}")
             print(data)
             print(labels)
-            trn_wgt = Transactions.objects.filter(create_at__date__range=[start.strftime("%Y-%m-%d"),end.strftime("%Y-%m-%d")]).count()
+            trn_wgt = Transaction.objects.filter(create_at__date__range=[start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")]).count()
             avgs = sum(data)/trn_wgt
             avis = sum(items)/trn_wgt
         except:
