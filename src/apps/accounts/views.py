@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm, SalesEditForm, CustomerEditForm
 from django.http import HttpResponse
-from .models import User, Members, Employee
+from .models import User, Member, Employee
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from mypermissionmixin.custommixin import ValidatePermissionMixin
@@ -65,7 +65,7 @@ class RegisterSaveView(View):
                 usr.email = form.cleaned_data['email']
                 usr.password = form.cleaned_data['password']
                 usr.save()
-                mmbr = Members()
+                mmbr = Member()
                 mmbr.customers = usr
                 mmbr.gender = form.cleaned_data['gender']
                 mmbr.card_member = form.cleaned_data['member_card']
@@ -128,7 +128,7 @@ class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request):
         whoami = request.user.groups.all()[0]
 
-        member_list = Members.objects.all()
+        member_list = Member.objects.all()
         p = Paginator(member_list, 5)
         page = request.GET.get('page')
         members = p.get_page(page)
@@ -161,7 +161,7 @@ class AddCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             if form.cleaned_data['password']==form.cleaned_data['password2']:
                 pass
-                obj = Members()
+                obj = Member()
                 usr = User()
                 usr.username = form.cleaned_data['username']
                 usr.password = form.cleaned_data['password']
@@ -187,7 +187,7 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request, id):
         whoami = request.user.groups.all()[0]
-        obj = Members.objects.get(id=id)
+        obj = Member.objects.get(id=id)
 
         data = {
             'username': obj.customers.username,
@@ -207,7 +207,7 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
         })
 
     def post(self, request, id):
-        obj = Members.objects.get(id=id)
+        obj = Member.objects.get(id=id)
         usr = User.objects.get(id=obj.customers.id)
         form = CustomerEditForm(request.POST, request.FILES)
         if form.is_valid():
@@ -231,7 +231,7 @@ class DeleteMemberView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request, id):
-        obj = Members.objects.get(id=id)
+        obj = Member.objects.get(id=id)
         obj.delete()
         return redirect('/accounts')
 

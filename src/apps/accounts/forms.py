@@ -31,7 +31,7 @@ class RegisterMemberForm(forms.Form):
         'class': 'form-control'
     }))
 
-    member_card = forms.ModelChoiceField(queryset=mdl_account.CardMembers.objects.all(), label="Member Card", widget=forms.Select(attrs={
+    member_card = forms.ModelChoiceField(queryset=mdl_account.CardMember.objects.all(), label="Member Card", widget=forms.Select(attrs={
         'class': 'form-control'
     }))
 
@@ -79,7 +79,7 @@ class CustomerEditForm(forms.Form):
         'placeholder': 'change your password in here'
     }), required=False)
     photo = forms.ImageField(label='Photo', required=False)
-    card_member = forms.ModelChoiceField(label='Card Member',queryset=mdl_account.CardMembers.objects.all(), widget=forms.Select(
+    card_member = forms.ModelChoiceField(label='Card Member', queryset=mdl_account.CardMember.objects.all(), widget=forms.Select(
         attrs={
             'class': 'form-control'
         }
@@ -116,7 +116,7 @@ class CustomersForm(forms.Form):
         'class': 'form-control',
         'type': 'password'
     }))
-    card_member = forms.ModelChoiceField(label='Card Member',queryset=mdl_account.CardMembers.objects.all(), widget=forms.Select(
+    card_member = forms.ModelChoiceField(label='Card Member', queryset=mdl_account.CardMember.objects.all(), widget=forms.Select(
         attrs={
             'class': 'form-control'
         }

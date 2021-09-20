@@ -1,5 +1,5 @@
 from django.db import models
-from ..accounts.models import Employee, Members
+from ..accounts.models import Employee, Member
 from ..items.models import Items
 
 
@@ -16,7 +16,7 @@ class PaymentMethod(models.Model):
 
 
 class Transaction(models.Model):
-    member = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='transactions', null=True, blank=True)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='transactions', null=True, blank=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='transactions')
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, related_name='transactions')
     card_number = models.IntegerField(null=True, blank=True)

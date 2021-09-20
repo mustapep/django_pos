@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Employee, CardMembers, Members
+from .models import Employee, CardMember, Member
 
 
 class SalsesProfile(admin.ModelAdmin):
@@ -15,5 +15,5 @@ class CardMemberAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Employee, SalsesProfile)
-admin.site.register(Members, MemberAdmin)
-admin.site.register(CardMembers, CardMemberAdmin)
+admin.site.register(Member, MemberAdmin)
+admin.site.register(CardMember, CardMemberAdmin)
