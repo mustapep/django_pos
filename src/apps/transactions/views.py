@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 from apps.accounts.models import Employee
 from mypermissionmixin.custommixin import ValidatePermissionMixin
+from django.core.exceptions import PermissionDenied
 from .helper import income, dateRange
 import calendar
 
@@ -269,7 +270,7 @@ class DeletePaymentView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
 
 class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
-    permission_required = 'transactions.change_paymentmethods'
+    permission_required = 'transactions.change_transaction'
     login_url = '/login'
 
     def post(self, request, id):
@@ -277,9 +278,12 @@ class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
         whoami = request.user.groups.all()[0]
         if form.is_valid():
             trn = Transaction.objects.get(id=id)
-            trn.customer_purchase = int(form.cleaned_data['paying_off'])
-            trn.paid_of = True
-            trn.save()
+            if trn.paid_of == False:
+                trn.customer_purchase = int(form.cleaned_data['paying_off'])
+                trn.paid_of = True
+                trn.save()
+            else:
+                raise PermissionDenied
             return redirect('/transactions')
         return HttpResponse(request, form.errors)
 
