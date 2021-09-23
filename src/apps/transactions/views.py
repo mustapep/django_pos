@@ -67,21 +67,16 @@ class DetailTransactionView(LoginRequiredMixin, ValidatePermissionMixin, View):
         fp = CustomerPurchaseForm(request.POST)
         trn = Transaction.objects.get(id=id)
         whoami = request.user.groups.all()[0]
-        dt = DetailTransaction.objects.filter(transaction=trn)
-        print(dt)
-        total = []
-        total_item = []
-        for d in dt:
-            total.append(d.item_price*d.quantity)
-            total_item.append(d.quantity)
+        total = sum([d.item_price*d.quantity for d in trn.detail_transactions.all()])
+        total_item = sum([d.quantity for d in trn.detail_transactions.all()])
 
         return render(request, self.template_name, {
-            'dt': dt,
+            'dt': trn.detail_transactions.all(),
             'form': form,
             'total': total,
             'obj': trn,
-            't_i': sum(total_item),
-            't_p': sum(total),
+            't_i': total_item,
+            't_p': total,
             'id': id,
             'fp': fp,
             'whoami': str(whoami)
