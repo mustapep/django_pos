@@ -21,7 +21,7 @@ class Transaction(models.Model):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, related_name='transactions')
     card_number = models.IntegerField(null=True, blank=True)
     paid_of = models.BooleanField(default=False)
-    customer_purchase = models.IntegerField(null=True, blank=True)
+    customer_purchase = models.FloatField(null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
