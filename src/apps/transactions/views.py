@@ -1,5 +1,5 @@
 import datetime
-
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Transaction, DetailTransaction, PaymentMethod
@@ -278,12 +278,21 @@ class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
         whoami = request.user.groups.all()[0]
         if form.is_valid():
             trn = Transaction.objects.get(id=id)
-            if trn.paid_of == False:
-                trn.customer_purchase = int(form.cleaned_data['paying_off'])
-                trn.paid_of = True
-                trn.save()
+            sub_total=sum([t.item_price*t.quantity for t in trn.detail_transactions.all()])
+            print(sub_total==0)
+            if int(form.cleaned_data['paying_off'])>= sub_total:
+                if sub_total== 0:
+                    messages.warning(request,"please order first")
+                    return redirect(f'/transactions/{id}/detail_transaction')
+                elif trn.paid_of == False:
+                    trn.customer_purchase = int(form.cleaned_data['paying_off'])
+                    trn.paid_of = True
+                    trn.save()
+                else:
+                    raise PermissionDenied
             else:
-                raise PermissionDenied
+                messages.error(request,"The nominal is wrong")
+                return redirect(f'/transactions/{id}/detail_transaction')
             return redirect('/transactions')
         return HttpResponse(request, form.errors)
 

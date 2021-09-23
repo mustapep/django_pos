@@ -107,6 +107,13 @@
                   <th>{{fp.paying_off.label}}</th>
                   <td>{{fp.paying_off}}</td>
                 </tr>
+                {% if messages %}
+                  {% for message in messages %}
+                    <th style="color:rgb(181, 51, 51);"></th>
+                    <td style="color:rgb(181, 51, 51);">{{message}}</td>
+                  {% endfor %}
+                  
+                  {% endif %}
                 <tr>
                   <th></th>
                   <td style="padding-left: 173px;">
