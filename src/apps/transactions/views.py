@@ -274,7 +274,6 @@ class CustomerPurchaseView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             trn = Transaction.objects.get(id=id)
             sub_total=sum([t.item_price*t.quantity for t in trn.detail_transactions.all()])
-            print(sub_total==0)
             if int(form.cleaned_data['paying_off'])>= sub_total:
                 if sub_total== 0:
                     messages.warning(request,"please order first")
@@ -308,31 +307,23 @@ class TransactionsReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         whoami = request.user.groups.all()[0]
         self.data, self.month_label = [], []
         today = datetime.datetime.now()
-        sy = today.strftime("%Y")
-        self.year = sy
+        self.year = today.year
         for x in range(1, 13):
-            print(calendar.month_name[x], DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x))
-            record = DetailTransaction.objects.filter(transaction__create_at__year=sy).filter(transaction__create_at__month=x)
+            record = DetailTransaction.objects.filter(transaction__create_at__year=self.year,transaction__create_at__month=x)
             total_income = income(record)
             self.month_label.append(calendar.month_name[x])
             self.data.append(total_income)
-        print(self.month_label)
-        print(self.data)
         "'Avarage Sales Value'"
-        sub_totals = []
-        for s in DetailTransaction.objects.all():
-            sub_totals.append(s.sub_total)
-        print("sub_total", sub_totals)
+        sub_totals = [s.sub_total for s in DetailTransaction.objects.all()]
         avgs = sum(sub_totals) / Transaction.objects.all().count()
 
         "'Avarage Items per Sales'"
         avis = DetailTransaction.objects.all().count() / Transaction.objects.all().count()
-        print('Kesini')
         return render(request, self.template_name, {
             'data': self.data,
             'year': self.year,
             'month_label': self.month_label,
-            'trn_wdgt': Transaction.objects.filter(create_at__year=sy).filter(paid_of=True).count(),
+            'trn_wdgt': Transaction.objects.filter(create_at__year=self.year, paid_of=True).count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
             'whoami': str(whoami)
