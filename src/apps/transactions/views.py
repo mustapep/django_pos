@@ -340,36 +340,30 @@ class MonthlyReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
     def get(self, request):
         whoami = request.user.groups.all()[0]
         today = datetime.datetime.now()
-        y = today.strftime("%Y")
-        d = calendar.monthrange(int(y),int(today.strftime("%m")))[1]
-        trans = Transaction.objects.filter(create_at__year=y).filter(create_at__month=today.strftime("%m")).filter(paid_of=True)
-        print("total transaction :",trans.count())
-        data, month_label = [], []
+        d = calendar.monthrange(today.year,today.month)[1]
+        trans = Transaction.objects.filter(create_at__year=today.year, create_at__month=today.month, paid_of=True)
+        data, date_label = [], []
         for i in range(d+1):
-            month_label.append(str(i))
+            date_label.append(str(i))
             total_day = []
             for t in trans:
-                sub_totals =[]
                 if t.create_at.strftime("%d") == str(i):
-                    dt = DetailTransaction.objects.filter(transaction__id=t.id)
-                    for d in dt:
-                        sub_totals.append(d.sub_total)
-                total_day.append(sum(sub_totals))
+                    sub_totals =[d.sub_total for d in t.detail_transactions.all()]
+                    total_day.append(sum(sub_totals))
             data.append(sum(total_day))
         "'Avarage Sales Value'"
-        sub_totals = []
-        for s in DetailTransaction.objects.filter(transaction__create_at__year=y):
-            sub_totals.append(s.sub_total)
-        avgs = sum(sub_totals) / DetailTransaction.objects.filter(transaction__create_at__year=y).count()
+        print("data: ",data)
+        details = DetailTransaction.objects.filter(transaction__create_at__year=today.year)
+        sub_totals = [s.sub_total for s in details]
+        avgs = sum(sub_totals) / details.count()
 
         "'Avarage Items per Sales'"
-        dt = DetailTransaction.objects.filter(transaction__create_at__year=y)
-        tr = Transaction.objects.filter(create_at__year=y).filter(paid_of=True)
-        avis = dt.count()/tr.count()
+        tr = Transaction.objects.filter(create_at__year=today.year, paid_of=True)
+        avis = details.count()/tr.count()
         return render(request, self.template_name, {
             'data': data,
-            'month_label': month_label,
-            'mn': calendar.month_name[int(today.strftime("%m"))],
+            'month_label': date_label,
+            'mn': calendar.month_name[today.month],
             'trn_wdgt': tr.count(),
             'avgs': round(avgs, 2),
             'avis': round(avis, 2),
