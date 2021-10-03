@@ -380,24 +380,21 @@ class TodayReportView(LoginRequiredMixin, ValidatePermissionMixin, View):
         whoami = request.user.groups.all()[0]
         "All transactions in today"
         today = datetime.datetime.now()
-        y, m, d  = today.strftime('%Y'),today.strftime('%m'),today.strftime('%d')
+        y, m, d  = today.year,today.month,today.day
         data , month_label, items= [],[], []
-        trans = Transaction.objects.filter(create_at__year=y).filter(create_at__month=m).filter(create_at__day=d).filter(paid_of=True)
+        trans = Transaction.objects.filter(create_at__year=y, create_at__month=m, create_at__day=d, paid_of=True)
         sh, eh=0,1
         for i in range(12):
             month_label.append(f"{sh}-{eh}")
             tsh, teh= trans.filter(create_at__hour=sh), trans.filter(create_at__hour=eh)
             sub_totals = []
             for s in tsh:
-                d_sh = DetailTransaction.objects.filter(transaction__id=s.id)
-                items.append(d_sh.count())
-                for d in d_sh:
-                    sub_totals.append(d.sub_total)
+                items.append(s.detail_transactions.all().count())
+                sub_totals += [d.sub_total for d in s.detail_transactions.all()]
             for e in teh:
-                d_eh = DetailTransaction.objects.filter(transaction__id=e.id)
-                for d in d_eh:
-                    items.append(d.quantity)
-                    sub_totals.append(d.sub_total)
+                d_eh = e.detail_transactions.all()
+                items+=[d.quantity for d in d_eh]
+                sub_totals+=[d.sub_total for d in d_eh]
             data.append(sum(sub_totals))
             sh+=2
             eh+=2
