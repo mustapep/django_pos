@@ -1,9 +1,9 @@
 from django import forms
-from .models import Transactions
+from .models import Transaction
 from apps.items.models import Items
-from apps.accounts.models import Members, Sales
+from apps.accounts.models import Member, Employee
 from apps.items.models import Categories, Items
-from apps.transactions.models import PaymentMethods
+from apps.transactions.models import PaymentMethod
 
 
 class SalesCreateOrderForm(forms.Form):
@@ -22,17 +22,12 @@ class SalesCreateOrderForm(forms.Form):
 
 
 class TransactionForm(forms.Form):
-    member = forms.ModelChoiceField(queryset=Members.objects.all(),label='Member', widget=forms.Select(
+    member = forms.ModelChoiceField(queryset=Member.objects.all(),label='Member', widget=forms.Select(
         attrs={
             'class': 'form-control'
         },
     ), required=False)
-    sales = forms.ModelChoiceField(queryset=Sales.objects.all(),label='Sales', widget=forms.Select(
-        attrs={
-            'class': 'form-control'
-        }
-    ))
-    payment_method = forms.ModelChoiceField(queryset=PaymentMethods.objects.all(),label='Payment Method', widget=forms.Select(
+    payment_method = forms.ModelChoiceField(queryset=PaymentMethod.objects.all(),label='Payment Method', widget=forms.Select(
         attrs={
             'class': 'form-control'
         }

@@ -19,11 +19,12 @@ class ListItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
         p = Paginator(item_list, 5)
         page = request.GET.get('page')
         items = p.get_page(page)
-        print(request.user.is_authenticated)
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
             'items': items,
             'page': p,
-            'data': items.object_list
+            'data': items.object_list,
+            'whoami': str(whoami)
         })
 
 
@@ -35,17 +36,15 @@ class AddItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
         form = ItemForm()
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
     def post(self, request):
         form = ItemForm(request.POST, request.FILES)
-        print('isi request.POST : ', request.POST)
-        print('isi request.FILES :', request.FILES)
-        print('isi form :', form)
         if form.is_valid():
-            print('Valid Bre...')
             obj = Items()
             obj.categories = form.cleaned_data['category']
             obj.name = form.cleaned_data['name']
@@ -64,9 +63,7 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request, id):
         item = Items.objects.get(id=id)
-        print(item)
-        print(item.categories)
-        print(type(item.categories))
+        whoami = request.user.groups.all()[0]
         data = {
             'id': item.id,
             'category': item.categories,
@@ -79,7 +76,8 @@ class UpdateItemView(LoginRequiredMixin, ValidatePermissionMixin, View):
         form = ItemForm(initial=data)
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
@@ -119,10 +117,12 @@ class ListCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         p = Paginator(categories_list, 5)
         page = request.GET.get('page')
         categories = p.get_page(page)
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
             'categories': categories,
             'page': p,
-            'data': categories.object_list
+            'data': categories.object_list,
+            'whoami': str(whoami)
         })
 
 
@@ -134,8 +134,10 @@ class AddCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
         form = AddCategoriesForm(request.POST)
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
     def post(self, request):
@@ -154,13 +156,15 @@ class EditCategoriesView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request, id):
         obj = Categories.objects.get(id=id)
+        whoami = request.user.groups.all()[0]
         data = {
             'name': obj.name
         }
         form = AddCategoriesForm(initial=data)
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
@@ -192,10 +196,12 @@ class ListUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
         p = Paginator(unit_list, 5)
         page = request.GET.get('page')
         unit = p.get_page(page)
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name,{
             'unit': unit,
             'page': p,
-            'data': unit.object_list
+            'data': unit.object_list,
+            'whoami': str(whoami)
         })
 
 class AddUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
@@ -205,8 +211,10 @@ class AddUnitView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
     def get(self, request):
         form = UnitForm(request.POST)
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
     def post(self, request):
@@ -230,9 +238,11 @@ class EditUNitView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'name': obj.name
         }
         form = UnitForm(initial=data)
+        whoami = request.user.groups.all()[0]
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):

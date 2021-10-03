@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Sales, CardMembers, Members
+from .models import Employee, CardMember, Member
 
 
-class SalsesProfile(admin.ModelAdmin):
+class EmployeeProfile(admin.ModelAdmin):
     list_display = ('user', 'address', 'nik_numb', 'create_at', 'update_at')
 
 
@@ -14,6 +14,6 @@ class CardMemberAdmin(admin.ModelAdmin):
     list_display = ('name', 'create_at', 'update_at')
 
 
-admin.site.register(Sales, SalsesProfile)
-admin.site.register(Members, MemberAdmin)
-admin.site.register(CardMembers, CardMemberAdmin)
+admin.site.register(Employee, EmployeeProfile)
+admin.site.register(Member, MemberAdmin)
+admin.site.register(CardMember, CardMemberAdmin)

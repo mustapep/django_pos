@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .forms import LoginForm, RegisterMemberForm, CustomersForm, SalesForm, SalesEditForm, CustomerEditForm
 from django.http import HttpResponse
-from .models import User, Members, Sales
+from .models import User, Member, Employee
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from mypermissionmixin.custommixin import ValidatePermissionMixin
@@ -17,7 +17,7 @@ class Login(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            if Group.objects.get(name='sales') in request.user.groups.all():
+            if Group.objects.get(name='employee') in request.user.groups.all():
                 return redirect('/transactions')
             elif Group.objects.get(name='admin') in request.user.groups.all():
                 return redirect('/items')
@@ -37,7 +37,7 @@ class RegisterView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            if Group.objects.get(name='sales') in request.user.groups.all():
+            if Group.objects.get(name='employee') in request.user.groups.all():
                 return redirect('/transactions')
             elif Group.objects.get(name='admin') in request.user.groups.all():
                 return redirect('/items')
@@ -58,14 +58,14 @@ class RegisterSaveView(View):
             print(form)
             print('request POST :', request.POST)
             print('request FILES :', request.FILES)
-            if request.POST['ptransactionsassword'] == request.POST['password2']:
+            if request.POST['password'] == request.POST['password2']:
                 usr = User()
                 usr.username = form.cleaned_data['username']
                 usr.first_name = form.cleaned_data['first_name']
                 usr.email = form.cleaned_data['email']
                 usr.password = form.cleaned_data['password']
                 usr.save()
-                mmbr = Members()
+                mmbr = Member()
                 mmbr.customers = usr
                 mmbr.gender = form.cleaned_data['gender']
                 mmbr.card_member = form.cleaned_data['member_card']
@@ -92,7 +92,7 @@ class LoginProcess(View):
             usr = authenticate(username=username, password=password)
             try:
                 if usr.is_authenticated:
-                    if Group.objects.get(name='sales') in usr.groups.all():
+                    if Group.objects.get(name='employee') in usr.groups.all():
                         login(request, usr)
                         return redirect('/transactions')
                     elif Group.objects.get(name='admin') in usr.groups.all():
@@ -126,8 +126,9 @@ class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
 
-        member_list = Members.objects.all()
+        member_list = Member.objects.all()
         p = Paginator(member_list, 5)
         page = request.GET.get('page')
         members = p.get_page(page)
@@ -135,7 +136,8 @@ class ListCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
             'members': members,
             'page': p,
             'data': members.object_list,
-            'm': 'm'
+            'm': 'm',
+            'whoami': str(whoami)
         })
 
 
@@ -145,9 +147,11 @@ class AddCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
+        whoami = request.user.groups.all()[0]
         form = CustomersForm()
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
     def post(self, request):
@@ -157,7 +161,7 @@ class AddCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             if form.cleaned_data['password']==form.cleaned_data['password2']:
                 pass
-                obj = Members()
+                obj = Member()
                 usr = User()
                 usr.username = form.cleaned_data['username']
                 usr.password = form.cleaned_data['password']
@@ -182,7 +186,8 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request, id):
-        obj = Members.objects.get(id=id)
+        whoami = request.user.groups.all()[0]
+        obj = Member.objects.get(id=id)
 
         data = {
             'username': obj.customers.username,
@@ -197,11 +202,12 @@ class EditCustomerView(LoginRequiredMixin, ValidatePermissionMixin, View):
 
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
-        obj = Members.objects.get(id=id)
+        obj = Member.objects.get(id=id)
         usr = User.objects.get(id=obj.customers.id)
         form = CustomerEditForm(request.POST, request.FILES)
         if form.is_valid():
@@ -225,7 +231,7 @@ class DeleteMemberView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request, id):
-        obj = Members.objects.get(id=id)
+        obj = Member.objects.get(id=id)
         obj.delete()
         return redirect('/accounts')
 
@@ -243,14 +249,16 @@ class ListSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        sales_list = Sales.objects.all()
+        whoami = request.user.groups.all()[0]
+        sales_list = Employee.objects.all()
         p = Paginator(sales_list, 5)
         page = request.GET.get('page')
         sales = p.get_page(page)
         return render(request, self.template_name, {
             'sales': sales,
             'page': p,
-            'data': sales.object_list
+            'data': sales.object_list,
+            'whoami': str(whoami)
         })
 
 
@@ -260,11 +268,11 @@ class AddSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        print(request.POST)
-        print(request.FILES)
+        whoami = request.user.groups.all()[0]
         form = SalesForm()
         return render(request, self.template_name, {
-            'form': form
+            'form': form,
+            'whoami': str(whoami)
         })
 
 
@@ -273,12 +281,12 @@ class AddSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         if form.is_valid():
             if form.cleaned_data['password'] == form.cleaned_data['password2']:
                 usr = User.objects.create_user(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-                grp = Group.objects.get(name='sales')
+                grp = Group.objects.get(name='employee')
                 usr.first_name = form.cleaned_data['first_name']
                 usr.last_name = form.cleaned_data['last_name']
                 usr.groups.add(grp)
                 usr.save()
-                sales = Sales()
+                sales = Employee()
                 sales.user = usr
                 sales.address = form.cleaned_data['address']
                 sales.nik_numb = int(form.cleaned_data['nik_numb'])
@@ -293,7 +301,8 @@ class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     template_name = 'admin/edit_sales.html'
 
     def get(self, request, id):
-        obj = Sales.objects.get(id=id)
+        whoami = request.user.groups.all()[0]
+        obj = Employee.objects.get(id=id)
         data = {
             'username': obj.user.username,
             'first_name': obj.user.first_name,
@@ -305,7 +314,8 @@ class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         form = SalesEditForm(initial=data)
         return render(request, self.template_name, {
             'form': form,
-            'id': id
+            'id': id,
+            'whoami': str(whoami)
         })
 
     def post(self, request, id):
@@ -313,7 +323,7 @@ class EditSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
         print(request.POST)
         print(request.FILES)
         if form.is_valid():
-            obj = Sales.objects.get(id=id)
+            obj = Employee.objects.get(id=id)
             obj.user.username = form.cleaned_data['username']
             obj.user.first_name = form.cleaned_data['first_name']
             obj.user.last_name = form.cleaned_data['last_name']
@@ -336,7 +346,7 @@ class DeleteSalesView(LoginRequiredMixin, ValidatePermissionMixin, View):
     permission_required = 'accounts.delete_sales'
     login_url = '/login'
     def get(self, request, id):
-        s = Sales.objects.get(id=id)
+        s = Employee.objects.get(id=id)
         s.delete()
         return redirect('/accounts/sales')
 

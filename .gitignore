@@ -17,19 +17,19 @@ media
 *.bak
 
 # If you are using PyCharm #
-.idea/*
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/dictionaries
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.xml
-.idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
-.idea/**/gradle.xml
-.idea/**/libraries
+..idea/*
+..idea/**/workspace.xml
+..idea/**/tasks.xml
+..idea/dictionaries
+..idea/**/dataSources/
+..idea/**/dataSources.ids
+..idea/**/dataSources.xml
+..idea/**/dataSources.local.xml
+..idea/**/sqlDataSources.xml
+..idea/**/dynamic.xml
+..idea/**/uiDesigner.xml
+..idea/**/gradle.xml
+..idea/**/libraries
 *.iws /out/
 
 # Python #
@@ -122,16 +122,8 @@ GitHub.sublime-settings
 !.vscode/launch.json
 !.vscode/extensions.json
 .history
-/src/apps/transactions/migrations/0002_detailtransaction.py
-/src/apps/transactions/migrations/0003_auto_20210409_0751.py
-/src/apps/transactions/migrations/0004_auto_20210409_0754.py
-/src/apps/transactions/migrations/0005_detailtransaction_quantity.py
-/src/apps/items/migrations/0002_auto_20210412_1721.py
-/src/apps/items/migrations/0003_auto_20210412_1721.py
+/src/apps/transactions/migrations/*
+/src/apps/items/migrations/*
 /src/static/vendors/
 /src/testing/
-/src/apps/transactions/migrations/0002_auto_20210630_2023.py
-/src/apps/transactions/migrations/0003_auto_20210630_2028.py
-/src/apps/transactions/migrations/0004_detailtransaction_sub_total.py
-/src/apps/items/migrations/0005_auto_20210630_2106.py
-/src/apps/accounts/migrations/0002_auto_20210710_1833.py
+/src/apps/accounts/migrations/*

@@ -26,10 +26,10 @@ class Unit(models.Model):
 
 
 class Items(models.Model):
-    categories = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name='cat')
+    categories = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name='cat') #perjelas nama backward relationnya --> items
     name = models.CharField(max_length=50)
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, blank=True, null=True)
-    price = models.IntegerField()
+    price = models.IntegerField() #ganti dengan desimal
     description = models.TextField()
     item_img = models.ImageField(upload_to='items/')
     create_at = models.DateTimeField(auto_now_add=True)
