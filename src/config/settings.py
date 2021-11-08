@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'mypermissionmixin',
-    'testing',
     'apps.accounts',
     'apps.items',
     'apps.transactions',
@@ -89,12 +88,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'my_restaurant',
-        'USER': 'learn',
-        'PASSWORD': 'learn',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'sqlite.db',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 
