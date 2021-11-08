@@ -2,8 +2,8 @@
 
 This is Django Point Of Sales open source project, simple features in this project
 - Transactions
-- Item management
-- Account Management
+- Items management
+- Accounts Management
 - Transactions Report
 
 In this project, i use adminlte template [Adminlte3](https://adminlte.io/themes/v3/)
@@ -16,7 +16,7 @@ I create this project to anyone who wants to learn how to colaborating and shari
 You can choose python env or anaconda.
 - Python Env
 
-    delete [] and change env name
+    delete [ ] and change env name
 
     ```html
     $ python3 -m venv [env name]
