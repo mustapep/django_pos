@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import *
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, ValidatePermissionMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
 from django.http import HttpResponse
 from mypermissionmixin.custommixin import ValidatePermissionMixin
