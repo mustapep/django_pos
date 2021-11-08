@@ -1,4 +1,4 @@
-# Django Point Of Sale
+# Django Point Of Sales
 
 This is Django Point Of Sales open source project, simple features in this project
 - Transactions
