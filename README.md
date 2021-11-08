@@ -10,7 +10,7 @@ In this project, i use adminlte template [Adminlte3](https://adminlte.io/themes/
 
 ## **Why Create This Project**
 
-I create this project to anyone who wants to learn how to colaborating and sharing.But this is very simple project and i allow you to remodel and redevelop. So just clone the project and spill your idea.Enjoy code :)
+This project to anyone who wants to learn how to colaborating and sharing.But this is very simple project and i allow you to remodel and redevelop. So just clone the project and spill your idea.Enjoy code :)
 ## **How To Use**
 ###  Create the environment
 You can choose python env or anaconda.
